@@ -1,0 +1,7 @@
+asset_id,asset_name,environment,criticality,owner_team
+srv-web-01,web-frontend-01,production,high,WebOps
+srv-api-01,customer-api-01,production,high,Platform
+srv-db-01,orders-db-01,production,high,DBA
+srv-batch-01,billing-batch-01,production,medium,FinanceOps
+srv-web-dev-01,web-frontend-dev,development,low,WebOps
+srv-api-test-01,customer-api-test,test,medium,Platform
