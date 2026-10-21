@@ -22,9 +22,27 @@ modulo-01/
         ├── casos_candidatos.csv
         ├── catalogo_activos.csv
         └── plantilla_entrega.md
+
+modulo-02/
+└── lab-02-primer-workflow-n8n/
+    ├── README.md
+    ├── ENUNCIADO.md
+    └── materiales/
+        ├── casos_prueba.json
+        └── checklist_pruebas.md
 ```
 
 La estructura se ampliará a medida que avancemos por los módulos del curso.
+
+## Laboratorios disponibles
+
+### Módulo 1 — Diseño de la automatización
+
+Análisis de procesos candidatos, modelado del workflow, reglas deterministas, riesgos e intervención humana.
+
+### Módulo 2 — Primer workflow con n8n
+
+Construcción manual del flujo de triaje, validación de entradas, rutas con If y Switch, clasificación P1–P4, fallback, pruebas y depuración de errores.
 
 ## Uso
 
