@@ -30,9 +30,17 @@ modulo-02/
     └── materiales/
         ├── casos_prueba.json
         └── checklist_pruebas.md
-```
 
-La estructura se ampliará a medida que avancemos por los módulos del curso.
+modulo-03/
+└── lab-03-webhook-api/
+    ├── README.md
+    ├── ENUNCIADO.md
+    └── materiales/
+        ├── alertas_webhook.json
+        ├── checklist_pruebas.md
+        ├── contrato_api.md
+        └── comandos_curl.md
+```
 
 ## Laboratorios disponibles
 
@@ -43,6 +51,10 @@ Análisis de procesos candidatos, modelado del workflow, reglas deterministas, r
 ### Módulo 2 — Primer workflow con n8n
 
 Construcción manual del flujo de triaje, validación de entradas, rutas con If y Switch, clasificación P1–P4, fallback, pruebas y depuración de errores.
+
+### Módulo 3 — Eventos, webhooks e integración mediante API
+
+Sustitución de la entrada simulada por un Webhook, consulta del catálogo de activos mediante HTTP Request, uso de credenciales, enriquecimiento de datos, registro de evidencias y respuesta estructurada al emisor.
 
 ## Uso
 
