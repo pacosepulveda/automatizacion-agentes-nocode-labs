@@ -1,0 +1,61 @@
+[
+  {
+    "alert_id": "ALT-1001",
+    "timestamp": "2026-10-21T08:15:00Z",
+    "asset_id": "srv-web-01",
+    "severity": "high",
+    "source": "monitoring",
+    "category": "availability",
+    "summary": "HTTP 5xx rate above threshold",
+    "details": "5xx responses exceeded 12% during the last 5 minutes"
+  },
+  {
+    "alert_id": "ALT-1002",
+    "timestamp": "2026-10-21T08:18:00Z",
+    "asset_id": "srv-api-test-01",
+    "severity": "medium",
+    "source": "monitoring",
+    "category": "performance",
+    "summary": "API latency above threshold",
+    "details": "p95 latency reached 1800 ms"
+  },
+  {
+    "alert_id": "ALT-1003",
+    "timestamp": "2026-10-21T08:20:00Z",
+    "asset_id": "srv-db-01",
+    "severity": "critical",
+    "source": "monitoring",
+    "category": "availability",
+    "summary": "Database health check failed",
+    "details": "Three consecutive health checks failed"
+  },
+  {
+    "alert_id": "ALT-1004",
+    "timestamp": "2026-10-21T08:25:00Z",
+    "asset_id": "srv-unknown-99",
+    "severity": "high",
+    "source": "monitoring",
+    "category": "security",
+    "summary": "Unexpected outbound connection",
+    "details": "Connection detected to an unclassified external destination"
+  },
+  {
+    "alert_id": "ALT-1005",
+    "timestamp": "2026-10-21T08:31:00Z",
+    "severity": "low",
+    "source": "monitoring",
+    "category": "capacity",
+    "summary": "Filesystem usage above 70%",
+    "details": "The alert does not include asset_id"
+  },
+  {
+    "alert_id": "ALT-1006",
+    "timestamp": "2026-10-21T08:35:00Z",
+    "asset_id": "srv-batch-01",
+    "severity": "urgent",
+    "source": "monitoring",
+    "category": "job",
+    "summary": "Billing batch delayed",
+    "details": "Severity value is intentionally outside the accepted set"
+  }
+]
