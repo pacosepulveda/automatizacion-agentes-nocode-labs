@@ -1,0 +1,113 @@
+[
+  {
+    "case_id": "EVT-01",
+    "description": "High en activo crítico de producción -> P1",
+    "payload": {
+      "alert_id": "ALT-2001",
+      "timestamp": "2026-10-21T09:00:00Z",
+      "asset_id": "srv-web-01",
+      "severity": "high",
+      "source": "monitoring",
+      "category": "availability",
+      "summary": "HTTP 5xx rate above threshold",
+      "details": "5xx responses exceeded 12% during the last 5 minutes"
+    }
+  },
+  {
+    "case_id": "EVT-02",
+    "description": "Medium en entorno test -> P3",
+    "payload": {
+      "alert_id": "ALT-2002",
+      "timestamp": "2026-10-21T09:02:00Z",
+      "asset_id": "srv-api-test-01",
+      "severity": "medium",
+      "source": "monitoring",
+      "category": "performance",
+      "summary": "API latency above threshold",
+      "details": "p95 latency reached 1800 ms"
+    }
+  },
+  {
+    "case_id": "EVT-03",
+    "description": "Critical -> P1",
+    "payload": {
+      "alert_id": "ALT-2003",
+      "timestamp": "2026-10-21T09:04:00Z",
+      "asset_id": "srv-db-01",
+      "severity": "critical",
+      "source": "monitoring",
+      "category": "availability",
+      "summary": "Database health check failed",
+      "details": "Three consecutive health checks failed"
+    }
+  },
+  {
+    "case_id": "EVT-04",
+    "description": "Activo inexistente -> revisión manual",
+    "payload": {
+      "alert_id": "ALT-2004",
+      "timestamp": "2026-10-21T09:06:00Z",
+      "asset_id": "srv-unknown-99",
+      "severity": "high",
+      "source": "monitoring",
+      "category": "security",
+      "summary": "Unexpected outbound connection",
+      "details": "Connection detected to an unclassified external destination"
+    }
+  },
+  {
+    "case_id": "EVT-05",
+    "description": "Falta asset_id -> revisión manual",
+    "payload": {
+      "alert_id": "ALT-2005",
+      "timestamp": "2026-10-21T09:08:00Z",
+      "severity": "low",
+      "source": "monitoring",
+      "category": "capacity",
+      "summary": "Filesystem usage above 70%",
+      "details": "The alert intentionally omits asset_id"
+    }
+  },
+  {
+    "case_id": "EVT-06",
+    "description": "Severidad desconocida -> revisión manual",
+    "payload": {
+      "alert_id": "ALT-2006",
+      "timestamp": "2026-10-21T09:10:00Z",
+      "asset_id": "srv-batch-01",
+      "severity": "urgent",
+      "source": "monitoring",
+      "category": "job",
+      "summary": "Billing batch delayed",
+      "details": "Severity is intentionally outside the accepted set"
+    }
+  },
+  {
+    "case_id": "EVT-07",
+    "description": "High en activo de criticidad medium -> P2",
+    "payload": {
+      "alert_id": "ALT-2007",
+      "timestamp": "2026-10-21T09:12:00Z",
+      "asset_id": "srv-batch-01",
+      "severity": "high",
+      "source": "monitoring",
+      "category": "job",
+      "summary": "Billing batch execution delayed",
+      "details": "Execution is 20 minutes behind schedule"
+    }
+  },
+  {
+    "case_id": "EVT-08",
+    "description": "Low en desarrollo -> P4",
+    "payload": {
+      "alert_id": "ALT-2008",
+      "timestamp": "2026-10-21T09:14:00Z",
+      "asset_id": "srv-web-dev-01",
+      "severity": "low",
+      "source": "monitoring",
+      "category": "capacity",
+      "summary": "Filesystem usage above 70%",
+      "details": "Development filesystem reached 72%"
+    }
+  }
+]
