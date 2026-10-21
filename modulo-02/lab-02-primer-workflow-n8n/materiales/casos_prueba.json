@@ -1,0 +1,89 @@
+[
+  {
+    "case_id": "CP-01",
+    "alert_id": "ALT-1001",
+    "timestamp": "2026-10-21T08:15:00Z",
+    "asset_id": "srv-web-01",
+    "severity": "high",
+    "summary": "HTTP 5xx rate above threshold",
+    "environment": "production",
+    "criticality": "high",
+    "owner_team": "WebOps"
+  },
+  {
+    "case_id": "CP-02",
+    "alert_id": "ALT-1002",
+    "timestamp": "2026-10-21T08:18:00Z",
+    "asset_id": "srv-api-test-01",
+    "severity": "medium",
+    "summary": "API latency above threshold",
+    "environment": "test",
+    "criticality": "medium",
+    "owner_team": "Platform"
+  },
+  {
+    "case_id": "CP-03",
+    "alert_id": "ALT-1003",
+    "timestamp": "2026-10-21T08:20:00Z",
+    "asset_id": "srv-db-01",
+    "severity": "critical",
+    "summary": "Database health check failed",
+    "environment": "production",
+    "criticality": "high",
+    "owner_team": "DBA"
+  },
+  {
+    "case_id": "CP-04",
+    "alert_id": "ALT-1007",
+    "timestamp": "2026-10-21T08:40:00Z",
+    "asset_id": "srv-batch-01",
+    "severity": "high",
+    "summary": "Billing batch delayed",
+    "environment": "production",
+    "criticality": "medium",
+    "owner_team": "FinanceOps"
+  },
+  {
+    "case_id": "CP-05",
+    "alert_id": "ALT-1008",
+    "timestamp": "2026-10-21T08:45:00Z",
+    "asset_id": "srv-web-dev-01",
+    "severity": "low",
+    "summary": "Filesystem usage above warning threshold",
+    "environment": "development",
+    "criticality": "low",
+    "owner_team": "WebOps"
+  },
+  {
+    "case_id": "CP-06",
+    "alert_id": "ALT-1005",
+    "timestamp": "2026-10-21T08:31:00Z",
+    "severity": "low",
+    "summary": "Filesystem usage above 70%",
+    "environment": "development",
+    "criticality": "low",
+    "owner_team": "WebOps"
+  },
+  {
+    "case_id": "CP-07",
+    "alert_id": "ALT-1006",
+    "timestamp": "2026-10-21T08:35:00Z",
+    "asset_id": "srv-batch-01",
+    "severity": "urgent",
+    "summary": "Billing batch delayed",
+    "environment": "production",
+    "criticality": "medium",
+    "owner_team": "FinanceOps"
+  },
+  {
+    "case_id": "CP-08",
+    "alert_id": "ALT-1009",
+    "timestamp": "2026-10-21T08:50:00Z",
+    "asset_id": "srv-api-01",
+    "severity": "high",
+    "summary": "",
+    "environment": "production",
+    "criticality": "high",
+    "owner_team": "Platform"
+  }
+]
