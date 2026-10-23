@@ -1,0 +1,32 @@
+TELVORA COMMUNICATIONS — INVENTARIO OPERATIVO
+Versión documental: 2026-10
+Uso: laboratorio formativo
+
+SERVICIO WEB DE PRODUCCIÓN
+El activo srv-web-01 corresponde al frontend web de producción web-frontend-01.
+El nombre operativo del servidor web de producción es web-prod-01.
+Está desplegado en la región eu-west-1.
+El puerto de servicio principal es el 443/TCP.
+El equipo propietario es WebOps.
+La criticidad del activo es alta.
+
+API DE CLIENTES DE PRODUCCIÓN
+El activo srv-api-01 corresponde al servicio customer-api-01.
+Está desplegado en producción.
+El equipo propietario es Platform.
+La criticidad del activo es alta.
+
+BASE DE DATOS DE PRODUCCIÓN
+El activo srv-db-01 corresponde al servicio de base de datos orders-db-01.
+El nombre lógico de la base de datos principal es telvora-prod-db.
+El equipo propietario es DBA.
+La criticidad del activo es alta.
+
+PROCESO BATCH DE FACTURACIÓN
+El activo srv-batch-01 corresponde al proceso billing-batch-01.
+Se ejecuta en producción.
+El equipo propietario es FinanceOps.
+La criticidad del activo es media.
+
+NOTA DE OPERACIÓN
+Este documento contiene información de inventario y propiedad. Los procedimientos de respuesta ante incidencias se mantienen en el runbook operativo y no deben deducirse únicamente a partir de este inventario.
