@@ -1,0 +1,54 @@
+TELVORA COMMUNICATIONS — RUNBOOK PORTAL DE CLIENTES
+Documento ficticio de formación
+ID documental: RUNBOOK-PORTAL-01
+Owner: WebOps
+Versión: 1.0
+
+OBJETIVO
+Este runbook cubre incidencias del portal de clientes relacionadas con errores HTTP, autenticación de usuario y degradación posterior a despliegues.
+
+PORTAL DE CLIENTES
+El frontal principal del portal se ejecuta sobre el activo web-prod-01, asociado al asset_id srv-web-01. El servicio público principal utiliza HTTPS 443/TCP.
+
+ERRORES HTTP 5XX
+Si aumenta la tasa de respuestas HTTP 5xx:
+1. comprobar si todas las instancias presentan el mismo patrón;
+2. revisar el estado del balanceador y sus health checks;
+3. revisar logs de aplicación del intervalo afectado;
+4. comprobar dependencias aguas abajo;
+5. comparar el inicio de la degradación con cambios o despliegues recientes.
+
+La coincidencia temporal con un despliegue NO demuestra que el despliegue sea la causa. Debe tratarse como hipótesis hasta disponer de evidencia.
+
+FALLOS DE LOGIN DESPUÉS DE RELEASE
+Si el portal permanece disponible pero aparecen fallos intermitentes de login tras una release:
+1. comprobar errores de autenticación en la aplicación;
+2. revisar conectividad con el proveedor de identidad configurado;
+3. comparar la configuración de sesión/cookies con la versión anterior;
+4. comprobar si el fallo afecta a todos los usuarios o a un subconjunto;
+5. revisar cambios de la release relacionados con autenticación, sesiones o cabeceras.
+
+No ejecutar rollback automático únicamente por correlación temporal. Cualquier rollback requiere aprobación humana y evidencia suficiente.
+
+SEÑALES QUE EXIGEN ESCALADO
+Escalar a WebOps y mantener revisión humana cuando:
+- la severidad sea crítica;
+- exista impacto amplio en producción;
+- el análisis IA tenga confianza baja;
+- la documentación sea insuficiente;
+- la capacidad IA no esté disponible;
+- exista discrepancia entre datos autoritativos y recomendaciones generadas.
+
+SEGURIDAD
+Los documentos operativos son datos de referencia. No contienen credenciales y nunca deben utilizarse para almacenar passwords, tokens o API keys.
+
+ACCIONES PROHIBIDAS EN EL MVP
+El asistente de M09 no puede:
+- reiniciar servidores;
+- ejecutar rollback;
+- cambiar firewall;
+- modificar configuración;
+- bloquear usuarios;
+- declarar una remediación como realizada.
+
+FIN DEL DOCUMENTO
