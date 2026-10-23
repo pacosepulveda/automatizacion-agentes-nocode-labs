@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "properties": {
+    "alert_id": {
+      "type": "string",
+      "description": "Identificador de la alerta recibida"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Resumen breve de la situación utilizando únicamente la información disponible"
+    },
+    "observed_facts": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Hechos presentes explícitamente en el contexto"
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Hipótesis técnicas que deben presentarse como posibilidades, no como hechos"
+    },
+    "recommended_checks": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Comprobaciones técnicas no destructivas recomendadas"
+    },
+    "missing_information": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Información adicional necesaria para aumentar la confianza del análisis"
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["low", "medium", "high"],
+      "description": "Confianza del asistente según la calidad y suficiencia del contexto"
+    },
+    "requires_human_review": {
+      "type": "boolean",
+      "description": "Indica si el caso requiere revisión humana antes de cualquier acción"
+    }
+  },
+  "required": [
+    "alert_id",
+    "summary",
+    "observed_facts",
+    "hypotheses",
+    "recommended_checks",
+    "missing_information",
+    "confidence",
+    "requires_human_review"
+  ],
+  "additionalProperties": false
+}
