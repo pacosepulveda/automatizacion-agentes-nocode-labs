@@ -3,7 +3,23 @@
 Sustituye `<WEBHOOK_URL>` por la URL que te muestre n8n.
 
 > En desarrollo usa la **Test URL** mientras el Webhook está escuchando.  
-> Con el workflow activo usa la **Production URL**.
+> Con el workflow **publicado** usa la **Production URL**.
+
+## Path único por alumno
+
+El Webhook del laboratorio debe usar un path distinto para cada alumno:
+
+```text
+m03-alert-<ID_ALUMNO>
+```
+
+Ejemplo:
+
+```text
+m03-alert-alumno01
+```
+
+No construyas manualmente la URL completa si no es necesario: copia la Test URL o la Production URL que muestra n8n y verifica que contiene tu identificador.
 
 ## EVT-01
 
