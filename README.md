@@ -75,6 +75,18 @@ modulo-06/
         ├── prompt_workflow_dify.md
         ├── contrato_dify_api.md
         └── checklist_pruebas.md
+
+modulo-07/
+└── lab-07-hardening-workflow-ia/
+    ├── README.md
+    ├── ENUNCIADO.md
+    └── materiales/
+        ├── casos_hardening.json
+        ├── matriz_riesgos.md
+        ├── prompt_hardened.md
+        ├── documento_prompt_injection.txt
+        ├── checklist_seguridad.md
+        └── politica_minima_template.md
 ```
 
 ## Laboratorios disponibles
@@ -102,6 +114,10 @@ Creación de una Knowledge Base privada, indexación Parent-child, embeddings co
 ### Módulo 6 — Integración n8n + Dify
 
 Construcción de una automatización híbrida donde n8n mantiene validación, APIs y prioridad determinista, invoca mediante API un Workflow publicado de Dify con RAG y Structured Output, valida su respuesta, combina el análisis IA con los datos autoritativos y mantiene trazabilidad y fallback ante fallos del componente de IA.
+
+### Módulo 7 — Hardening del workflow con IA
+
+Revisión de amenazas y trust boundaries, autenticación del Webhook, límites y minimización de inputs, resistencia a prompt injection directa e indirecta, política determinista de revisión humana, fallback ante caída de Dify, pruebas adversariales y definición de una política mínima antes de preparar el piloto.
 
 ## Uso
 
