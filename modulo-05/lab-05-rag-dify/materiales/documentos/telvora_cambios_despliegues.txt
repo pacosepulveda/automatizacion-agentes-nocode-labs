@@ -1,0 +1,24 @@
+TELVORA COMMUNICATIONS — CAMBIOS Y DESPLIEGUES
+Versión: 2026-10
+Uso: laboratorio formativo
+
+ÚLTIMO DESPLIEGUE DE CUSTOMER-API-01
+El último despliegue registrado de customer-api-01 se realizó el 20 de octubre de 2026 a las 18:42 UTC.
+
+La solicitud de cambio fue creada por la usuaria ficticia marta.rios.
+El despliegue fue ejecutado automáticamente por el pipeline platform-release.
+La versión desplegada fue 2026.10.20-3.
+El identificador del cambio fue CHG-4821.
+
+La validación posterior al despliegue finalizó correctamente a las 18:49 UTC.
+
+ÚLTIMO DESPLIEGUE DE WEB-FRONTEND-01
+El último despliegue registrado de web-frontend-01 se realizó el 21 de octubre de 2026 a las 07:50 UTC.
+
+La solicitud de cambio fue creada por el usuario ficticio david.molina.
+El despliegue fue ejecutado por el pipeline web-release.
+La versión desplegada fue 2026.10.21-1.
+El identificador del cambio fue CHG-4836.
+
+NOTA DE INTERPRETACIÓN
+La proximidad temporal entre un despliegue y una alerta no demuestra que el despliegue sea la causa de la incidencia. El historial de cambios debe utilizarse como evidencia contextual y combinarse con logs, métricas y otras comprobaciones técnicas.
