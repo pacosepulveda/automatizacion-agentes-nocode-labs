@@ -1,0 +1,66 @@
+[
+  {
+    "scenario_id": "OPS-01",
+    "name": "Baseline P1 saludable",
+    "action": "Ejecutar un caso equivalente a INT-01 con Webhook autenticado",
+    "expected": {
+      "priority": "P1",
+      "ai_status": "succeeded",
+      "human_review": true,
+      "purpose": "establecer baseline funcional y de latencia"
+    }
+  },
+  {
+    "scenario_id": "OPS-02",
+    "name": "Caso con documentación insuficiente",
+    "action": "Ejecutar un caso equivalente a SEC-06 / batch P2",
+    "expected": {
+      "priority": "P2",
+      "documentation_status": "insufficient_context",
+      "human_review": true,
+      "purpose": "verificar la policy de supervisión humana"
+    }
+  },
+  {
+    "scenario_id": "OPS-03",
+    "name": "Intentos de acceso sin autenticación",
+    "action": "Realizar tres invocaciones sin la cabecera de autenticación y después una correcta",
+    "expected": {
+      "unauthenticated_requests": "rejected",
+      "authenticated_request": "processed",
+      "purpose": "simular una señal operativa de auth failures sin interrumpir tráfico válido"
+    }
+  },
+  {
+    "scenario_id": "OPS-04",
+    "name": "Dify no disponible",
+    "action": "Romper temporalmente la ruta de Dify como en SEC-08 y ejecutar un P1",
+    "expected": {
+      "priority": "P1",
+      "ai_status": "unavailable",
+      "human_review": true,
+      "purpose": "validar degraded mode y runbook"
+    }
+  },
+  {
+    "scenario_id": "OPS-05",
+    "name": "Evidence API no disponible",
+    "action": "Si el workflow registra evidencia, utilizar temporalmente una ruta de evidence inexistente o el método de simulación indicado por el instructor",
+    "expected": {
+      "business_decision": "preserved",
+      "evidence_status": "failed_or_unavailable",
+      "purpose": "distinguir decisión de negocio de persistencia de evidencia"
+    }
+  },
+  {
+    "scenario_id": "OPS-06",
+    "name": "Rollback drill",
+    "action": "Introducir un cambio controlado en el candidato que haga fallar un gate, detectar el fallo y restaurar la configuración conocida como buena",
+    "expected": {
+      "fault_detected": true,
+      "rollback_executed": true,
+      "post_rollback_smoke_test": "passed",
+      "purpose": "demostrar que rollback es ejecutable y no solo documental"
+    }
+  }
+]
