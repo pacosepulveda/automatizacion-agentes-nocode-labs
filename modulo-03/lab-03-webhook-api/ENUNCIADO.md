@@ -42,16 +42,29 @@ Al finalizar deberías ser capaz de:
 
 ## Prerrequisitos
 
-Necesitas acceso al n8n del curso, haber revisado M01 y M02, acceso HTTPS a:
+Necesitas:
+
+- tu cuenta personal de alumno en n8n;
+- haber revisado M01 y M02;
+- acceso HTTPS al entorno n8n del curso:
+
+```text
+https://n8n-agentes.cloudsecurityinpractice.com/
+```
+
+- acceso HTTPS a:
 
 ```text
 https://api.cloudsecurityinpractice.com
 https://events.cloudsecurityinpractice.com
 ```
 
-y un token de API proporcionado por el instructor.
+- un token de API proporcionado por el instructor;
+- conocer tu identificador de alumno, por ejemplo `alumno01`.
 
 Para enviar peticiones puedes usar `curl`, PowerShell, Postman o equivalente.
+
+> **Importante en el entorno compartido:** cada alumno dispone de su propio espacio personal en n8n, pero las rutas de los Webhooks publicados pertenecen a la misma instancia. Por este motivo cada alumno utilizará un path de Webhook único.
 
 ---
 
@@ -153,13 +166,21 @@ Configura:
 
 ```text
 HTTP Method: POST
-Path: m03-alert
+Path: m03-alert-<ID_ALUMNO>
 Response: Using Respond to Webhook
 ```
 
+Por ejemplo, si tu identificador es `alumno01`:
+
+```text
+Path: m03-alert-alumno01
+```
+
+No utilices simplemente `m03-alert`: otro alumno podría haber registrado ya esa ruta y n8n no permite publicar dos Webhooks con el mismo path dentro de la misma instancia.
+
 n8n mostrará normalmente una **Test URL** y una **Production URL**.
 
-La Test URL se usa mientras desarrollas y el nodo está escuchando. La Production URL se usa con el workflow activo.
+La Test URL se usa mientras desarrollas y el nodo está escuchando. La Production URL se usa cuando el workflow está **publicado**.
 
 1. Haz que n8n escuche un evento de prueba.
 2. Copia la Test URL.
@@ -268,17 +289,28 @@ El instructor facilitará un token.
 
 No lo escribas en un Set, URL, nota, repositorio o captura.
 
-Crea una credencial HTTP de n8n, por ejemplo:
+Crea una credencial HTTP de n8n con un nombre como:
 
 ```text
 M03 - Lab API
 ```
 
-que envíe:
+Utiliza una credencial genérica de cabecera HTTP. En la interfaz de n8n, la configuración equivalente debe enviar:
+
+```text
+Authentication: Generic Credential Type
+Generic Auth Type: Header Auth
+Name: Authorization
+Value: Bearer <LAB_API_TOKEN>
+```
+
+El objetivo es que las peticiones salgan con:
 
 ```http
-Authorization: Bearer <token>
+Authorization: Bearer <LAB_API_TOKEN>
 ```
+
+La credencial queda almacenada en tu espacio personal de n8n. No incrustes el token directamente en los nodos del workflow.
 
 ---
 
@@ -375,6 +407,27 @@ owner_team
 ```
 
 No vuelvas a escribir manualmente valores del catálogo.
+
+## Recuperar datos de nodos anteriores
+
+Después de `03 - Consultar activo`, `$json` representa principalmente la respuesta de la API. Si necesitas recuperar un dato de la alerta original, referencia explícitamente el nodo que lo produjo.
+
+Por ejemplo, una expresión de n8n puede recuperar el `alert_id` normalizado mediante:
+
+```text
+{{ $('01 - Normalizar alerta').item.json.alert_id }}
+```
+
+Mientras que los datos de la respuesta actual de la API pueden obtenerse con expresiones como:
+
+```text
+{{ $json.asset_name }}
+{{ $json.environment }}
+{{ $json.criticality }}
+{{ $json.owner_team }}
+```
+
+El objetivo es comprender de qué nodo procede cada dato, no copiar valores manualmente.
 
 ---
 
@@ -592,16 +645,18 @@ Decide:
 # Parte 19 — Pasar a Production URL
 
 1. Guarda el workflow.
-2. Actívalo.
-3. Copia Production URL.
-4. Envía EVT-01.
-5. Comprueba historial.
+2. Pulsa **Publish**.
+3. Copia la Production URL.
+4. Comprueba que contiene tu path único, por ejemplo `m03-alert-alumno01`.
+5. Envía EVT-01.
+6. Comprueba el historial.
 
 Responde:
 
 - ¿qué ocurre con Test URL si n8n no escucha?
 - ¿por qué no usarla como endpoint estable?
-- ¿qué cambia al activar el workflow?
+- ¿qué cambia al publicar el workflow?
+- ¿por qué cada alumno necesita un path diferente aunque sus workflows sean privados?
 
 ---
 
@@ -616,6 +671,7 @@ Analiza:
 5. ¿qué no debería aparecer en logs?
 6. ¿qué riesgo existe si el catálogo es incorrecto?
 7. ¿ejecutarías remediación automática desde este flujo?
+8. ¿un path único por alumno equivale a autenticación? ¿Por qué no?
 
 No implementaremos todos los controles todavía.
 
