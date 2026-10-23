@@ -8,7 +8,7 @@ El curso utiliza principalmente **n8n** para orquestación, eventos, webhooks e 
 
 Los laboratorios son progresivos: cada módulo amplía el mismo escenario técnico en lugar de utilizar ejercicios aislados. El hilo conductor inicial es el **triaje y enriquecimiento de alertas técnicas de infraestructura**.
 
-A lo largo del curso el caso evolucionará desde el análisis y diseño del proceso hasta un prototipo integrado con validaciones, APIs, IA, conocimiento documental, trazabilidad y aprobación humana.
+A lo largo del curso el caso evoluciona desde el análisis y diseño del proceso hasta un prototipo integrado con validaciones, APIs, IA, conocimiento documental, trazabilidad y aprobación humana.
 
 ## Estructura
 
@@ -64,6 +64,17 @@ modulo-05/
             ├── telvora_runbook_incidentes.txt
             ├── telvora_backups_operacion.txt
             └── telvora_cambios_despliegues.txt
+
+modulo-06/
+└── lab-06-integracion-n8n-dify/
+    ├── README.md
+    ├── ENUNCIADO.md
+    └── materiales/
+        ├── casos_integracion.json
+        ├── schema_analisis_dify.json
+        ├── prompt_workflow_dify.md
+        ├── contrato_dify_api.md
+        └── checklist_pruebas.md
 ```
 
 ## Laboratorios disponibles
@@ -87,6 +98,10 @@ Construcción de un Chatflow para interpretar el contexto de una alerta, compara
 ### Módulo 5 — Knowledge Base y RAG en Dify
 
 Creación de una Knowledge Base privada, indexación Parent-child, embeddings con Amazon Titan, Hybrid Search con Cohere Rerank, pruebas de retrieval y construcción de un Chatflow que responda utilizando evidencia documental recuperada y reconozca cuándo la documentación no contiene la respuesta.
+
+### Módulo 6 — Integración n8n + Dify
+
+Construcción de una automatización híbrida donde n8n mantiene validación, APIs y prioridad determinista, invoca mediante API un Workflow publicado de Dify con RAG y Structured Output, valida su respuesta, combina el análisis IA con los datos autoritativos y mantiene trazabilidad y fallback ante fallos del componente de IA.
 
 ## Uso
 
