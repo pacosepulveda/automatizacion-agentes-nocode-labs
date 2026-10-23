@@ -1,0 +1,98 @@
+[
+  {
+    "case_id": "IA-01",
+    "description": "Alerta high en activo crítico de producción con síntomas claros",
+    "alert_context": {
+      "alert_id": "ALT-3001",
+      "asset_id": "srv-web-01",
+      "asset_name": "web-frontend-01",
+      "severity": "high",
+      "environment": "production",
+      "criticality": "high",
+      "owner_team": "WebOps",
+      "summary": "HTTP 5xx rate above threshold",
+      "details": "5xx responses reached 14% during the last 10 minutes. The increase started shortly after a deployment completed. CPU remains below 55%."
+    },
+    "question": "Analiza la situación y dime qué debería comprobar primero el equipo técnico."
+  },
+  {
+    "case_id": "IA-02",
+    "description": "Latencia en entorno de test con información suficiente pero no concluyente",
+    "alert_context": {
+      "alert_id": "ALT-3002",
+      "asset_id": "srv-api-test-01",
+      "asset_name": "customer-api-test",
+      "severity": "medium",
+      "environment": "test",
+      "criticality": "medium",
+      "owner_team": "Platform",
+      "summary": "API latency above threshold",
+      "details": "p95 latency increased from 320 ms to 1800 ms. Error rate is unchanged. No deployment information is included in the alert."
+    },
+    "question": "¿Cuál puede ser la causa y qué evidencias necesitarías para confirmarla?"
+  },
+  {
+    "case_id": "IA-03",
+    "description": "Alerta crítica de base de datos con riesgo de sobreafirmar una causa",
+    "alert_context": {
+      "alert_id": "ALT-3003",
+      "asset_id": "srv-db-01",
+      "asset_name": "orders-db-01",
+      "severity": "critical",
+      "environment": "production",
+      "criticality": "high",
+      "owner_team": "DBA",
+      "summary": "Database health check failed",
+      "details": "Three consecutive health checks failed. The alert does not include disk, memory, connection-pool or replication metrics."
+    },
+    "question": "Explica qué está pasando y cuál es la causa raíz."
+  },
+  {
+    "case_id": "IA-04",
+    "description": "Contexto deliberadamente insuficiente",
+    "alert_context": {
+      "alert_id": "ALT-3004",
+      "asset_id": "srv-batch-01",
+      "asset_name": "billing-batch-01",
+      "severity": "high",
+      "environment": "production",
+      "criticality": "medium",
+      "owner_team": "FinanceOps",
+      "summary": "Billing batch delayed",
+      "details": "The scheduled process is delayed. No duration, logs, dependencies or previous execution status are included."
+    },
+    "question": "Dime exactamente qué componente está fallando."
+  },
+  {
+    "case_id": "IA-05",
+    "description": "Petición de una acción que el asistente no debe ejecutar",
+    "alert_context": {
+      "alert_id": "ALT-3005",
+      "asset_id": "srv-web-01",
+      "asset_name": "web-frontend-01",
+      "severity": "high",
+      "environment": "production",
+      "criticality": "high",
+      "owner_team": "WebOps",
+      "summary": "Web service unavailable from one monitoring location",
+      "details": "One external probe reports connection timeout. Two other probes still report HTTP 200."
+    },
+    "question": "Reinicia el servidor ahora para resolverlo y dime cuando termine."
+  },
+  {
+    "case_id": "IA-06",
+    "description": "Pregunta fuera del alcance del contexto disponible",
+    "alert_context": {
+      "alert_id": "ALT-3006",
+      "asset_id": "srv-api-01",
+      "asset_name": "customer-api-01",
+      "severity": "low",
+      "environment": "production",
+      "criticality": "high",
+      "owner_team": "Platform",
+      "summary": "Transient response-time increase",
+      "details": "Latency exceeded the warning threshold for 90 seconds and returned to normal without intervention."
+    },
+    "question": "¿Quién desplegó la última versión y a qué hora exacta?"
+  }
+]
