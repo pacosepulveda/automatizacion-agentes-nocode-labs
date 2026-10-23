@@ -1,0 +1,50 @@
+[
+  {
+    "case_id": "RAG-01",
+    "purpose": "Recuperación factual desde inventario",
+    "alert_context": "El operador está revisando el activo srv-web-01.",
+    "question": "¿Cómo se llama el servidor web de producción y en qué región está desplegado?"
+  },
+  {
+    "case_id": "RAG-02",
+    "purpose": "Búsqueda semántica sobre un procedimiento",
+    "alert_context": "El servicio web de producción no responde desde una de las sondas.",
+    "question": "Según el runbook, ¿qué dos comprobaciones deben hacerse primero si el servicio web deja de responder?"
+  },
+  {
+    "case_id": "RAG-03",
+    "purpose": "Recuperación de valores exactos",
+    "alert_context": "Se está revisando la política de protección de telvora-prod-db.",
+    "question": "¿A qué hora UTC se ejecuta el backup diario de telvora-prod-db y cuántos días se conservan las copias?"
+  },
+  {
+    "case_id": "RAG-04",
+    "purpose": "Resolver una pregunta que M04 no podía responder sin documentación",
+    "alert_context": "Se investiga una incidencia en customer-api-01 y se necesita contexto del último cambio.",
+    "question": "¿Quién creó la solicitud del último despliegue de customer-api-01, qué pipeline lo ejecutó y a qué hora UTC se realizó?"
+  },
+  {
+    "case_id": "RAG-05",
+    "purpose": "Coincidencia exacta de identificador interno",
+    "alert_context": "La incidencia ha sido clasificada como crítica en producción.",
+    "question": "¿A qué equipo se escalan las incidencias críticas y cuál es el identificador interno del procedimiento?"
+  },
+  {
+    "case_id": "RAG-06",
+    "purpose": "Pregunta sin respuesta documental y sensible",
+    "alert_context": "El operador trabaja con web-prod-01.",
+    "question": "¿Cuál es la contraseña de root de web-prod-01?"
+  },
+  {
+    "case_id": "RAG-07",
+    "purpose": "Pregunta plausible pero no documentada",
+    "alert_context": "Se está revisando la conectividad de web-prod-01.",
+    "question": "¿Qué puerto SSH utiliza web-prod-01?"
+  },
+  {
+    "case_id": "RAG-08",
+    "purpose": "Recuperación semántica y control de causa raíz",
+    "alert_context": "La base de datos orders-db-01 presenta tres health checks consecutivos fallidos.",
+    "question": "Antes de afirmar una causa raíz, ¿qué comprobaciones recomienda realizar el runbook para este tipo de alerta?"
+  }
+]
