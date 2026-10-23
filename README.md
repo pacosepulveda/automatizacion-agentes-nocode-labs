@@ -50,6 +50,20 @@ modulo-04/
         ├── prompt_base.md
         ├── schema_salida.json
         └── checklist_evaluacion.md
+
+modulo-05/
+└── lab-05-rag-dify/
+    ├── README.md
+    ├── ENUNCIADO.md
+    └── materiales/
+        ├── casos_rag.json
+        ├── prompt_rag.md
+        ├── checklist_evaluacion.md
+        └── documentos/
+            ├── telvora_inventario_operativo.txt
+            ├── telvora_runbook_incidentes.txt
+            ├── telvora_backups_operacion.txt
+            └── telvora_cambios_despliegues.txt
 ```
 
 ## Laboratorios disponibles
@@ -69,6 +83,10 @@ Sustitución de la entrada simulada por un Webhook, consulta del catálogo de ac
 ### Módulo 4 — Asistente técnico con IA en Dify
 
 Construcción de un Chatflow para interpretar el contexto de una alerta, comparar prompts, controlar incertidumbre y acciones prohibidas, generar salida estructurada mediante JSON Schema y evaluar resultados de forma sistemática.
+
+### Módulo 5 — Knowledge Base y RAG en Dify
+
+Creación de una Knowledge Base privada, indexación Parent-child, embeddings con Amazon Titan, Hybrid Search con Cohere Rerank, pruebas de retrieval y construcción de un Chatflow que responda utilizando evidencia documental recuperada y reconozca cuándo la documentación no contiene la respuesta.
 
 ## Uso
 
