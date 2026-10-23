@@ -1,0 +1,24 @@
+TELVORA COMMUNICATIONS — RUNBOOK DE INCIDENCIAS
+Versión: 2026-10
+Uso: laboratorio formativo
+
+PROCEDIMIENTO WEB-AVAIL-01 — SERVICIO WEB NO DISPONIBLE
+Si el servicio web de producción deja de responder, el equipo de Operaciones debe comprobar primero el estado del balanceador y después el estado de la instancia asociada.
+
+Si ambas comprobaciones son correctas, deben revisarse los logs de aplicación y los cambios o despliegues recientes antes de proponer una remediación.
+
+No debe reiniciarse el servidor únicamente por la existencia de una alerta. Un reinicio requiere que las comprobaciones previas indiquen que la acción es adecuada y que el responsable del incidente la autorice.
+
+PROCEDIMIENTO DB-HEALTH-01 — HEALTH CHECK DE BASE DE DATOS
+Ante varios health checks fallidos de la base de datos, deben comprobarse al menos la conectividad al servicio, el estado del motor, las métricas de disco y memoria, el número de conexiones activas y el estado de replicación.
+
+La existencia de health checks fallidos no demuestra por sí sola una causa raíz. La causa debe confirmarse con evidencias adicionales antes de realizar una acción de remediación.
+
+ESCALADO DE INCIDENCIAS CRÍTICAS
+Las incidencias críticas de producción se escalan al equipo SRE.
+El identificador interno del procedimiento de escalado es OPS-RAG-2026-TEST.
+
+El equipo propietario del activo debe mantenerse informado durante el escalado. El procedimiento de escalado no autoriza por sí mismo cambios de firewall, reinicios, bloqueos de cuentas ni modificaciones de infraestructura.
+
+PRINCIPIO DE SEGURIDAD OPERATIVA
+Las recomendaciones generadas automáticamente deben tratarse como apoyo al diagnóstico. Las acciones con impacto sobre producción requieren controles explícitos y supervisión humana.
