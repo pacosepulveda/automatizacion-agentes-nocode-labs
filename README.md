@@ -8,7 +8,7 @@ El curso utiliza principalmente **n8n** para orquestación, eventos, webhooks e 
 
 Los laboratorios son progresivos: cada módulo amplía el mismo escenario técnico en lugar de utilizar ejercicios aislados. El hilo conductor inicial es el **triaje y enriquecimiento de alertas técnicas de infraestructura**.
 
-A lo largo del curso el caso evoluciona desde el análisis y diseño del proceso hasta un prototipo integrado con validaciones, APIs, IA, conocimiento documental, trazabilidad y aprobación humana.
+A lo largo del curso el caso evoluciona desde el análisis y diseño del proceso hasta un prototipo integrado con validaciones, APIs, IA, conocimiento documental, trazabilidad, aprobación humana y preparación de piloto.
 
 ## Estructura
 
@@ -87,6 +87,19 @@ modulo-07/
         ├── documento_prompt_injection.txt
         ├── checklist_seguridad.md
         └── politica_minima_template.md
+
+modulo-08/
+└── lab-08-piloto-operacion/
+    ├── README.md
+    ├── ENUNCIADO.md
+    └── materiales/
+        ├── release_manifest_template.md
+        ├── checklist_readiness.md
+        ├── escenarios_operacion.json
+        ├── registro_metricas.csv
+        ├── runbook_operacion_template.md
+        ├── postmortem_template.md
+        └── decision_piloto_template.md
 ```
 
 ## Laboratorios disponibles
@@ -118,6 +131,10 @@ Construcción de una automatización híbrida donde n8n mantiene validación, AP
 ### Módulo 7 — Hardening del workflow con IA
 
 Revisión de amenazas y trust boundaries, autenticación del Webhook, límites y minimización de inputs, resistencia a prompt injection directa e indirecta, política determinista de revisión humana, fallback ante caída de Dify, pruebas adversariales y definición de una política mínima antes de preparar el piloto.
+
+### Módulo 8 — Preparación de piloto y operación
+
+Definición de ownership y decision rights, release manifest, gates de readiness, rollout shadow/limited pilot, observabilidad mediante ejecuciones reales, jornada operativa simulada, runbook, rollback drill, postmortem y decisión final `READY / READY_WITH_CONDITIONS / NOT_READY`.
 
 ## Uso
 
