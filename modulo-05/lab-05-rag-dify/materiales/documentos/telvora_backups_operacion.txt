@@ -1,0 +1,21 @@
+TELVORA COMMUNICATIONS — OPERACIÓN DE BACKUPS
+Versión: 2026-10
+Uso: laboratorio formativo
+
+BACKUP DE LA BASE DE DATOS PRINCIPAL
+La base de datos principal telvora-prod-db realiza una copia de seguridad completa cada día a las 02:30 UTC.
+
+La política de retención mantiene las copias durante 14 días.
+
+El equipo responsable de revisar los fallos de backup es DBA.
+
+VALIDACIÓN DE RESTAURACIÓN
+Cada jueves a las 05:00 UTC se ejecuta una prueba automática de restauración sobre un entorno aislado de validación.
+
+Una copia marcada como completada no debe considerarse suficiente evidencia de recuperabilidad si no existen pruebas periódicas de restauración.
+
+ALERTAS DE BACKUP
+Si una copia diaria falla, debe revisarse el job, el espacio disponible en el destino y el estado del servicio de base de datos. Si dos ejecuciones consecutivas fallan, la incidencia debe escalarse al equipo DBA.
+
+ALCANCE DEL DOCUMENTO
+Este documento no contiene contraseñas, claves de cifrado ni credenciales de acceso a la base de datos. Esos secretos se gestionan fuera de la base documental operativa.
