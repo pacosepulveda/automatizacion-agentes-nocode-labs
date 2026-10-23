@@ -40,6 +40,16 @@ modulo-03/
         ├── checklist_pruebas.md
         ├── contrato_api.md
         └── comandos_curl.md
+
+modulo-04/
+└── lab-04-asistente-tecnico-dify/
+    ├── README.md
+    ├── ENUNCIADO.md
+    └── materiales/
+        ├── casos_asistente.json
+        ├── prompt_base.md
+        ├── schema_salida.json
+        └── checklist_evaluacion.md
 ```
 
 ## Laboratorios disponibles
@@ -55,6 +65,10 @@ Construcción manual del flujo de triaje, validación de entradas, rutas con If 
 ### Módulo 3 — Eventos, webhooks e integración mediante API
 
 Sustitución de la entrada simulada por un Webhook, consulta del catálogo de activos mediante HTTP Request, uso de credenciales, enriquecimiento de datos, registro de evidencias y respuesta estructurada al emisor.
+
+### Módulo 4 — Asistente técnico con IA en Dify
+
+Construcción de un Chatflow para interpretar el contexto de una alerta, comparar prompts, controlar incertidumbre y acciones prohibidas, generar salida estructurada mediante JSON Schema y evaluar resultados de forma sistemática.
 
 ## Uso
 
