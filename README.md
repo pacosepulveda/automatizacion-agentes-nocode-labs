@@ -8,7 +8,7 @@ El curso utiliza principalmente **n8n** para orquestación, eventos, webhooks e 
 
 Los laboratorios son progresivos: cada módulo amplía el mismo escenario técnico en lugar de utilizar ejercicios aislados. El hilo conductor inicial es el **triaje y enriquecimiento de alertas técnicas de infraestructura**.
 
-A lo largo del curso el caso evoluciona desde el análisis y diseño del proceso hasta un prototipo integrado con validaciones, APIs, IA, conocimiento documental, trazabilidad, aprobación humana y preparación de piloto.
+A lo largo del curso el caso evoluciona desde el análisis y diseño del proceso hasta un prototipo integrado con validaciones, APIs, IA, conocimiento documental, trazabilidad, aprobación humana, preparación de piloto y un capstone end-to-end.
 
 ## Estructura
 
@@ -100,6 +100,20 @@ modulo-08/
         ├── runbook_operacion_template.md
         ├── postmortem_template.md
         └── decision_piloto_template.md
+
+modulo-09/
+└── lab-09-capstone-integrado/
+    ├── README.md
+    ├── ENUNCIADO.md
+    └── materiales/
+        ├── brief_capstone.md
+        ├── contrato_capstone.md
+        ├── casos_capstone.json
+        ├── telvora_runbook_portal_cliente.txt
+        ├── checklist_validacion.md
+        ├── rubrica_capstone.md
+        ├── plantilla_informe_final.md
+        └── plantilla_presentacion.md
 ```
 
 ## Laboratorios disponibles
@@ -135,6 +149,10 @@ Revisión de amenazas y trust boundaries, autenticación del Webhook, límites y
 ### Módulo 8 — Preparación de piloto y operación
 
 Definición de ownership y decision rights, release manifest, gates de readiness, rollout shadow/limited pilot, observabilidad mediante ejecuciones reales, jornada operativa simulada, runbook, rollback drill, postmortem y decisión final `READY / READY_WITH_CONDITIONS / NOT_READY`.
+
+### Módulo 9 — Caso integrado final
+
+Capstone end-to-end a partir de un briefing y contratos: arquitectura, Webhook autenticado, validación, API de activos, prioridad determinista, Dify + RAG, Structured Output, política de revisión humana, siguiente paso simulado, evidencia, seguridad, resiliencia, batería de pruebas, trazabilidad, informe técnico y defensa de la solución.
 
 ## Uso
 
