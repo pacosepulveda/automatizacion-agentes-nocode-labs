@@ -1,0 +1,55 @@
+{
+  "type": "object",
+  "properties": {
+    "summary": {
+      "type": "string",
+      "description": "Resumen técnico de la situación basado en la alerta y el contexto documental recuperado"
+    },
+    "observed_facts": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Hechos presentes explícitamente en alert_context"
+    },
+    "documented_guidance": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Orientaciones operativas respaldadas por la documentación recuperada"
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Hipótesis técnicas expresadas como posibilidades y no como hechos"
+    },
+    "recommended_checks": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Comprobaciones técnicas no destructivas recomendadas"
+    },
+    "missing_information": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Información necesaria para aumentar la confianza o confirmar hipótesis"
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["low", "medium", "high"],
+      "description": "Confianza según suficiencia del contexto y de la evidencia documental"
+    },
+    "documentation_status": {
+      "type": "string",
+      "enum": ["relevant_context_found", "insufficient_context"],
+      "description": "Indica si el contexto documental recuperado contiene orientación relevante para el caso"
+    }
+  },
+  "required": [
+    "summary",
+    "observed_facts",
+    "documented_guidance",
+    "hypotheses",
+    "recommended_checks",
+    "missing_information",
+    "confidence",
+    "documentation_status"
+  ],
+  "additionalProperties": false
+}
