@@ -4,6 +4,18 @@ En este laboratorio se implementa por primera vez en **n8n** el proceso diseñad
 
 El objetivo no es integrar todavía sistemas externos, sino aprender a construir, ejecutar, probar y depurar un workflow visual con datos estructurados.
 
+## Entorno del curso
+
+Accede a n8n desde:
+
+```text
+https://n8n-agentes.cloudsecurityinpractice.com/
+```
+
+Trabaja siempre con la **cuenta de alumno facilitada por el instructor**. Cada alumno dispone de su propio espacio personal de trabajo en n8n, por lo que los workflows y credenciales de otros alumnos no deben aparecer en tu sesión.
+
+Este laboratorio utiliza **Manual Trigger**, por lo que no es necesario publicar el workflow para realizar las pruebas. La publicación se introducirá en el Laboratorio 3 cuando utilicemos una Production URL de Webhook.
+
 ## Qué se construirá
 
 Un workflow que:
