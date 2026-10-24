@@ -6,6 +6,7 @@
     "expected": {
       "priority": "P1",
       "ai_status": "succeeded",
+      "mcp_status": "available",
       "human_review": true,
       "purpose": "establecer baseline funcional y de latencia"
     }
@@ -39,11 +40,24 @@
       "priority": "P1",
       "ai_status": "unavailable",
       "human_review": true,
-      "purpose": "validar degraded mode y runbook"
+      "purpose": "validar degraded mode completo de IA y runbook"
     }
   },
   {
     "scenario_id": "OPS-05",
+    "name": "MCP no disponible",
+    "action": "Utilizar el mecanismo de fallo MCP indicado por el instructor y ejecutar un caso válido",
+    "expected": {
+      "business_decision": "preserved",
+      "ai_status": "succeeded",
+      "operational_context_status": "unavailable",
+      "mcp_status": "unavailable",
+      "human_review": true,
+      "purpose": "distinguir fallo MCP de caída completa de Dify"
+    }
+  },
+  {
+    "scenario_id": "OPS-06",
     "name": "Evidence API no disponible",
     "action": "Si el workflow registra evidencia, utilizar temporalmente una ruta de evidence inexistente o el método de simulación indicado por el instructor",
     "expected": {
@@ -53,7 +67,7 @@
     }
   },
   {
-    "scenario_id": "OPS-06",
+    "scenario_id": "OPS-07",
     "name": "Rollback drill",
     "action": "Introducir un cambio controlado en el candidato que haga fallar un gate, detectar el fallo y restaurar la configuración conocida como buena",
     "expected": {
