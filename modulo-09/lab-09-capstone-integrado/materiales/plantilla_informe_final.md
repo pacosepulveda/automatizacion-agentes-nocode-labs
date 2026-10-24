@@ -8,6 +8,7 @@ Describe en 8-12 líneas:
 qué problema resuelve
 qué arquitectura has elegido
 qué papel tiene n8n
+qué papel tienen REST, RAG y MCP
 qué papel tiene Dify
 qué controles principales existen
 resultado global de validación
@@ -31,26 +32,31 @@ Debe mostrar al menos:
 emisor
 Webhook n8n
 validación
-Lab API
+Lab API REST
 prioridad
 Dify API
-Knowledge Retrieval
-LLM
+Knowledge Retrieval / RAG
+Agent FunctionCalling / MCP
+LLM final
 policy review
 next_step
 evidence
 respuesta
 ```
 
-## 4. Fuentes autoritativas
+Marca trust boundaries y puntos de fallo.
 
-| Dato / decisión | Fuente autoritativa | Justificación |
-|---|---|---|
-| priority |  |  |
-| owner_team |  |  |
-| analysis |  |  |
-| next_step |  |  |
-| human review |  |  |
+## 4. Fuentes autoritativas y fuentes de contexto
+
+| Dato / decisión | Fuente | Tipo / autoridad | Justificación |
+|---|---|---|---|
+| priority |  |  |  |
+| owner_team |  |  |  |
+| documented_guidance |  |  |  |
+| operational_facts |  |  |  |
+| analysis |  |  |  |
+| next_step |  |  |  |
+| human review |  |  |  |
 
 ## 5. Contratos
 
@@ -60,10 +66,25 @@ respuesta
 
 ```
 
+### REST / Lab API
+
+```text
+
+```
+
 ### Dify
 
 ```text
 
+```
+
+### MCP
+
+```text
+Servidor:
+Tools permitidas:
+Contexto que recibe el Agent:
+Qué acciones NO puede ejecutar:
 ```
 
 ### Salida
@@ -92,7 +113,21 @@ Explica:
 - cómo verificas grounding;
 - qué ocurre si falta documentación.
 
-## 7. Seguridad
+## 7. MCP y Agent
+
+Explica:
+
+```text
+por qué MCP aporta valor frente a llamar REST directamente en esa fase
+qué tools expones
+por qué son read-only
+cómo verificas tool calls reales
+cómo distingues no results de MCP unavailable
+```
+
+Incluye un ejemplo de round/tool call si está disponible.
+
+## 8. Seguridad
 
 Describe controles para:
 
@@ -102,22 +137,29 @@ secretos
 input validation
 input limits
 data minimization
+Agent context minimization
 prompt injection
+RAG injection
+tool output como dato no confiable
 autoridad de decisiones
+tool allowlist / mínimo privilegio
 ```
 
-## 8. Resiliencia
+## 9. Resiliencia
 
-Describe:
+Describe por separado:
 
 ```text
 fallback Dify
+fallback MCP
 retries
 human review
 Evidence API failure
 ```
 
-## 9. Resultados de pruebas
+Explica qué capacidad se conserva en cada degradación.
+
+## 10. Resultados de pruebas
 
 | Caso | Esperado | Observado | PASS/FAIL | Evidencia |
 |---|---|---|---|---|
@@ -131,8 +173,9 @@ Evidence API failure
 | CAP-08 |  |  |  |  |
 | CAP-09 |  |  |  |  |
 | CAP-10 |  |  |  |  |
+| CAP-11 |  |  |  |  |
 
-## 10. Trazabilidad
+## 11. Trazabilidad
 
 Ejemplo de correlación de una ejecución:
 
@@ -140,29 +183,32 @@ Ejemplo de correlación de una ejecución:
 alert_id:
 n8n execution:
 dify_run_id:
+Agent round/tool call relevante:
 evidence_id:
 ```
 
-## 11. Trade-offs
+## 12. Trade-offs
 
 Explica al menos tres decisiones donde existía más de una alternativa.
 
 Ejemplos:
 
 ```text
+REST directo vs MCP
 qué procesa IA y qué no
 cuándo forzar human review
+qué hacer si falla MCP
 qué hacer si falla evidence
-qué datos enviar a Dify
+qué datos enviar a Dify/Agent
 ```
 
-## 12. Riesgos residuales
+## 13. Riesgos residuales
 
 | Riesgo | Severidad | Control actual | Mejora futura |
 |---|---|---|---|
 |  |  |  |  |
 
-## 13. Resultado del MVP
+## 14. Resultado del MVP
 
 Selecciona:
 
@@ -178,7 +224,7 @@ Justificación:
 
 ```
 
-## 14. Siguiente paso recomendado
+## 15. Siguiente paso recomendado
 
 Elige y justifica una de estas opciones o una equivalente:
 
@@ -188,10 +234,11 @@ limited pilot
 resolver blockers antes de pilotar
 ampliar documentación
 añadir observabilidad
-añadir una integración no destructiva
+ampliar herramientas MCP read-only
+preparar aprobación humana para futuras tools de acción
 ```
 
-## 15. Lecciones aprendidas
+## 16. Lecciones aprendidas
 
 ```text
 
