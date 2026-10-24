@@ -1,7 +1,8 @@
-run_id,scenario_id,timestamp,n8n_status,end_to_end_ms,dify_status,dify_elapsed_ms,dify_total_tokens,priority,human_review,evidence_status,notes
-1,OPS-01,,,,,,,,,,
-2,OPS-02,,,,,,,,,,
-3,OPS-03,,,,,,,,,,
-4,OPS-04,,,,,,,,,,
-5,OPS-05,,,,,,,,,,
-6,OPS-06,,,,,,,,,,
+run_id,scenario_id,timestamp,n8n_status,end_to_end_ms,dify_status,mcp_status,operational_context_status,dify_elapsed_ms,dify_total_tokens,priority,human_review,evidence_status,notes
+1,OPS-01,,,,,,,,,,,,
+2,OPS-02,,,,,,,,,,,,
+3,OPS-03,,,,,,,,,,,,
+4,OPS-04,,,,,,,,,,,,
+5,OPS-05,,,,,,,,,,,,
+6,OPS-06,,,,,,,,,,,,
+7,OPS-07,,,,,,,,,,,,
