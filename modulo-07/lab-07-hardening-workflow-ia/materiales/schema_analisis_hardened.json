@@ -1,0 +1,57 @@
+{
+  "type": "object",
+  "properties": {
+    "summary": {
+      "type": "string"
+    },
+    "observed_facts": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "operational_facts": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "documented_guidance": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "recommended_checks": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "missing_information": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    },
+    "documentation_status": {
+      "type": "string",
+      "enum": ["relevant_context_found", "insufficient_context"]
+    },
+    "operational_context_status": {
+      "type": "string",
+      "enum": ["relevant_live_context_found", "no_relevant_live_context", "unavailable"]
+    }
+  },
+  "required": [
+    "summary",
+    "observed_facts",
+    "operational_facts",
+    "documented_guidance",
+    "hypotheses",
+    "recommended_checks",
+    "missing_information",
+    "confidence",
+    "documentation_status",
+    "operational_context_status"
+  ],
+  "additionalProperties": false
+}
