@@ -152,11 +152,11 @@ Revisión de trust boundaries y amenazas sobre Webhook, RAG, LLM y MCP; autentic
 
 ### Módulo 8 — Preparación de piloto y operación
 
-Definición de ownership y decision rights, release manifest, gates de readiness, rollout shadow/limited pilot, observabilidad mediante ejecuciones reales, jornada operativa simulada, runbook, rollback drill, postmortem y decisión final `READY / READY_WITH_CONDITIONS / NOT_READY`.
+Definición de ownership y decision rights, release manifest con n8n/Dify/RAG/MCP, gates de readiness, rollout shadow/limited pilot, observabilidad de `ai_status`, `mcp_status`, latencias y evidencias, jornada operativa con degradaciones separadas de Dify, MCP y Evidence API, runbook, rollback drill, postmortem y decisión final `READY / READY_WITH_CONDITIONS / NOT_READY`.
 
 ### Módulo 9 — Caso integrado final
 
-Capstone end-to-end a partir de un briefing y contratos: arquitectura, Webhook autenticado, validación, API de activos, prioridad determinista, Dify + RAG, Structured Output, política de revisión humana, siguiente paso simulado, evidencia, seguridad, resiliencia, batería de pruebas, trazabilidad, informe técnico y defensa de la solución.
+Capstone end-to-end a partir de un briefing y contratos: Webhook autenticado, validación, REST para datos autoritativos, prioridad determinista, RAG para conocimiento, Agent `FunctionCalling` con MCP para estado operativo vivo, LLM final con Structured Output, policy de revisión humana, `next_step` simulado, evidencia, tool safety, degradación Dify/MCP, batería CAP-01…CAP-11, trazabilidad, informe técnico y defensa de la solución.
 
 ## Uso
 
