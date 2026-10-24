@@ -3,17 +3,22 @@
   "properties": {
     "summary": {
       "type": "string",
-      "description": "Resumen técnico de la situación basado en la alerta y el contexto documental recuperado"
+      "description": "Resumen técnico de la situación basado en hechos validados, documentación RAG y contexto operativo MCP"
     },
     "observed_facts": {
       "type": "array",
       "items": {"type": "string"},
-      "description": "Hechos presentes explícitamente en alert_context"
+      "description": "Hechos presentes explícitamente en alert_context y validados por n8n"
+    },
+    "operational_facts": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Hechos de estado operativo vivo obtenidos por el Agent mediante tools MCP; vacío si no hay contexto vivo relevante"
     },
     "documented_guidance": {
       "type": "array",
       "items": {"type": "string"},
-      "description": "Orientaciones operativas respaldadas por la documentación recuperada"
+      "description": "Orientaciones operativas respaldadas por la documentación recuperada mediante RAG"
     },
     "hypotheses": {
       "type": "array",
@@ -33,23 +38,30 @@
     "confidence": {
       "type": "string",
       "enum": ["low", "medium", "high"],
-      "description": "Confianza según suficiencia del contexto y de la evidencia documental"
+      "description": "Confianza según suficiencia de hechos, documentación y contexto operativo disponible"
     },
     "documentation_status": {
       "type": "string",
       "enum": ["relevant_context_found", "insufficient_context"],
-      "description": "Indica si el contexto documental recuperado contiene orientación relevante para el caso"
+      "description": "Indica si la documentación recuperada contiene orientación relevante para el caso"
+    },
+    "operational_context_status": {
+      "type": "string",
+      "enum": ["relevant_live_context_found", "no_relevant_live_context"],
+      "description": "Indica si las tools MCP aportaron hechos operativos vivos relevantes para el caso"
     }
   },
   "required": [
     "summary",
     "observed_facts",
+    "operational_facts",
     "documented_guidance",
     "hypotheses",
     "recommended_checks",
     "missing_information",
     "confidence",
-    "documentation_status"
+    "documentation_status",
+    "operational_context_status"
   ],
   "additionalProperties": false
 }
