@@ -11,8 +11,8 @@ M02  reglas en n8n
 M03  Webhooks y APIs
 M04  IA controlada
 M05  RAG
-M06  integración n8n + Dify
-M07  hardening
+M06  integración n8n + Dify + MCP
+M07  hardening de IA/RAG/MCP
 M08  preparación de piloto y operación
 ```
 
@@ -26,7 +26,7 @@ El sistema final será:
 Telvora Incident Triage & Response Advisor v1.0
 ```
 
-Su función es recibir alertas técnicas, validarlas, enriquecerlas, calcular una prioridad determinista, utilizar Dify + RAG para generar análisis técnico, aplicar una política de revisión humana y devolver un siguiente paso simulado y trazable.
+Su función es recibir alertas técnicas, validarlas, enriquecerlas, calcular una prioridad determinista, utilizar RAG para documentación, MCP para estado operativo vivo, un LLM para síntesis controlada, aplicar una política de revisión humana y devolver un siguiente paso simulado y trazable.
 
 No realizará remediación real.
 
@@ -39,15 +39,17 @@ Al finalizar deberías ser capaz de:
 - convertir un briefing en requisitos implementables;
 - proponer y defender una arquitectura end-to-end;
 - separar reglas deterministas y capacidades probabilísticas;
+- justificar cuándo utilizar REST, RAG y MCP;
 - diseñar contratos entre sistemas;
 - reutilizar APIs y Credentials de forma segura;
 - incorporar documentación nueva a una Knowledge Base;
 - integrar n8n con un Workflow Dify publicado;
+- utilizar un Agent `FunctionCalling` con tools MCP controladas;
 - mantener grounding y Structured Output;
 - aplicar supervisión humana mediante una policy determinista;
 - diseñar un siguiente paso simulado fuera del LLM;
-- probar happy paths, excepciones, ataques controlados y fallos de dependencias;
-- mantener trazabilidad entre n8n, Dify y evidencias;
+- probar happy paths, excepciones, prompt injection y fallos diferenciados de Dify/MCP/Evidence API;
+- mantener trazabilidad entre n8n, Dify, Agent/tool calls y evidencias;
 - identificar riesgos residuales;
 - presentar y defender técnicamente la solución.
 
@@ -91,6 +93,8 @@ entradas
 salidas
 reglas autoritativas
 integraciones
+fuentes documentales
+fuentes operativas vivas
 riesgos
 excepciones
 controles
@@ -98,8 +102,6 @@ criterios de supervisión humana
 ```
 
 No empieces por la herramienta.
-
-Debes poder explicar primero qué sistema necesitas construir.
 
 ---
 
@@ -111,11 +113,13 @@ Crea un diagrama que incluya al menos:
 emisor
 Webhook n8n
 validación
-Lab API
+Lab API REST
 clasificación
 Dify API
-Knowledge Retrieval
-LLM
+Knowledge Retrieval / RAG
+Agent FunctionCalling
+Telvora Ops Hub / MCP
+LLM final
 policy de revisión
 next_step
 evidence
@@ -127,12 +131,17 @@ Marca explícitamente:
 ```text
 trust boundaries
 fuentes autoritativas
+fuentes de contexto
 puntos de fallo
 ```
 
-No existe una única disposición visual correcta.
+Debes ser capaz de explicar:
 
-La arquitectura debe cumplir el contrato.
+```text
+REST → datos autoritativos mediante contrato conocido
+RAG  → conocimiento documental
+MCP  → herramientas/estado vivo para el Agent
+```
 
 ---
 
@@ -144,18 +153,9 @@ Puedes:
 duplicar/adaptar M08
 ```
 
-o construir un nuevo candidato reutilizando componentes ya probados.
+o construir un nuevo candidato reutilizando componentes probados.
 
 No se puntúa más por reconstruir desde cero.
-
-Se evalúa:
-
-```text
-calidad del diseño
-consistencia
-pruebas
-justificación
-```
 
 Nombre recomendado n8n:
 
@@ -167,12 +167,6 @@ Webhook:
 
 ```text
 m09-capstone-<ID_ALUMNO>
-```
-
-Ejemplo:
-
-```text
-m09-capstone-alumno01
 ```
 
 ---
@@ -199,11 +193,7 @@ No continúes si el documento no se recupera de forma razonable.
 
 ## Parte 5 — Diseñar la entrada
 
-Implementa el contrato definido en:
-
-```text
-contrato_capstone.md
-```
+Implementa `contrato_capstone.md`.
 
 Debe existir:
 
@@ -214,13 +204,17 @@ allowlist severity
 límites de longitud
 ```
 
-Las entradas inválidas deben desviarse antes de Dify.
+Las entradas inválidas deben desviarse antes de Dify y, por tanto, antes de MCP.
 
 ---
 
-## Parte 6 — Enriquecimiento y prioridad
+## Parte 6 — Enriquecimiento REST y prioridad
 
-Consulta la Lab API utilizando `asset_id`.
+Consulta:
+
+```text
+GET https://api.cloudsecurityinpractice.com/api/v1/assets/{asset_id}
+```
 
 Recupera:
 
@@ -237,23 +231,17 @@ La prioridad debe estar completamente decidida antes de llamar a Dify.
 
 ---
 
-## Parte 7 — Preparar la llamada IA
+## Parte 7 — Preparar la llamada Dify
 
-Envía a Dify únicamente los campos necesarios.
+Envía únicamente los campos necesarios.
 
-Como mínimo, el contexto puede incluir:
+Inputs mínimos sugeridos:
 
 ```text
-alert_id
+alert_context
 asset_id
-asset_name
-severity
-environment
-criticality
-owner_team
-priority
-summary
-details
+retrieval_query
+question
 ```
 
 No envíes:
@@ -263,39 +251,128 @@ Authorization
 cookies
 API keys
 Webhook secret
+MCP_TOKEN
 headers innecesarios
 ```
 
-Construye una `retrieval_query` razonable.
-
-No se exige una única fórmula.
-
-Debes justificar qué campos utilizas y por qué.
+El `asset_id` separado permite que el Agent reciba un identificador ya validado sin necesitar parsear texto libre.
 
 ---
 
-## Parte 8 — Dify Workflow
+## Parte 8 — Knowledge Retrieval / RAG
 
-Puedes reutilizar/adaptar el Workflow endurecido de M07.
+Dify debe recuperar documentación mediante tu KB.
 
-Debe mantener:
+La salida RAG representa:
 
 ```text
-Knowledge Retrieval
-prompt hardened
-Structured Output
-GPT-5.6 Luna
-Temperature OFF
-Top P OFF
+qué está documentado
+qué runbook existe
+qué orientación interna está disponible
+```
+
+No representa necesariamente el estado actual del activo.
+
+---
+
+## Parte 9 — Agent + MCP
+
+Puedes reutilizar/adaptar el Agent endurecido de M07.
+
+Debe utilizar:
+
+```text
+FunctionCalling
+openai.gpt-5.6-luna
+Maximum Iterations limitado
+Memory OFF
+```
+
+Tool List permitida:
+
+```text
+get_recent_changes
+get_recent_alerts
+get_open_incidents
+get_service_health
+```
+
+El Agent no debe disponer de tools destructivas.
+
+Su Query debería construirse a partir de:
+
+```text
+asset_id validado
++
+instrucción estable
+```
+
+No necesita recibir `details` completos.
+
+Debes poder demostrar al menos una llamada real inspeccionando:
+
+```text
+Agent → Detalle → Round
+→ tool_call_name
+→ tool_call_input
+→ tool_response
+```
+
+---
+
+## Parte 10 — LLM final y Structured Output
+
+El LLM final debe sintetizar tres fuentes diferenciadas:
+
+```text
+alert_context → hechos validados
+RAG → orientación documentada
+MCP → hechos operativos vivos
+```
+
+Debe devolver al menos:
+
+```text
+summary
+observed_facts[]
+operational_facts[]
+documented_guidance[]
+hypotheses[]
+recommended_checks[]
+missing_information[]
+confidence
+documentation_status
+operational_context_status
 ```
 
 No añadas `priority` como decisión autoritativa del LLM.
 
-La App debe estar publicada antes de invocarla desde n8n.
+---
+
+## Parte 11 — Manejo de MCP unavailable
+
+La solución debe diferenciar:
+
+```text
+MCP respondió sin datos relevantes
+→ no_relevant_live_context
+
+MCP no pudo consultarse
+→ unavailable
+```
+
+Si MCP falla pero Dify puede continuar:
+
+```text
+operational_facts = []
+operational_context_status = unavailable
+```
+
+No inventes estado vivo.
 
 ---
 
-## Parte 9 — Policy de revisión humana
+## Parte 12 — Policy de revisión humana
 
 Implementa fuera del LLM una regla equivalente a:
 
@@ -305,6 +382,7 @@ final_requires_human_review =
     OR ai_status != succeeded
     OR confidence == low
     OR documentation_status == insufficient_context
+    OR operational_context_status == unavailable
 ```
 
 Puedes ampliar la policy si lo justificas.
@@ -313,129 +391,126 @@ No puedes reducir revisión humana de una P1 basándote únicamente en la confia
 
 ---
 
-## Parte 10 — Siguiente paso simulado
+## Parte 13 — Siguiente paso simulado
 
-Implementa:
+Implementa en n8n:
 
 ```text
-MANUAL_REVIEW
-ESCALATE_HUMAN
-NOTIFY_OWNER
+status = manual_review
+→ MANUAL_REVIEW
+
+final_requires_human_review = true
+→ ESCALATE_HUMAN
+
+resto
+→ NOTIFY_OWNER
 ```
 
-según `contrato_capstone.md`.
-
-Este campo se calcula en n8n.
+Dify no decide `next_step`.
 
 No ejecutes acciones reales.
 
 ---
 
-## Parte 11 — Evidencia
+## Parte 14 — Evidencia
 
 Registra evidencia mediante el contrato soportado por la API.
 
-Si la Evidence API no admite campos de trazabilidad IA ampliados:
+Si la Evidence API no admite todos los campos ampliados:
 
 ```text
 mantén el contrato compatible
 ```
 
-y conserva:
-
-```text
-dify_run_id
-ai_status
-analysis
-```
-
-en las ejecuciones de n8n/Dify.
+y conserva trazabilidad adicional en n8n/Dify.
 
 No inventes `evidence_id` si el registro falla.
 
 ---
 
-## Parte 12 — Respuesta final
+## Parte 15 — Respuesta final
 
 Devuelve un JSON coherente con `contrato_capstone.md`.
 
-Debe quedar claro:
+Debe distinguir:
 
 ```text
-resultado de negocio
+business status
 priority
 human review
 next_step
-estado IA
-estado de evidencia
+ai_status
+mcp_status / operational_context_status
+evidence_status
 ```
 
 ---
 
 # M09.2 — Validación y presentación
 
-## Parte 13 — Predicción antes de ejecutar
+## Parte 16 — Predicción antes de ejecutar
 
 Abre:
 
 ```text
 casos_capstone.json
+checklist_validacion.md
 ```
 
-y `checklist_validacion.md`.
+Antes de ejecutar cada caso completa el resultado esperado.
 
-Antes de ejecutar cada caso completa:
-
-```text
-resultado esperado por el equipo
-```
-
-No copies una solución externa.
-
-Derívalo del briefing y contratos.
+No copies una solución externa. Derívalo del briefing y contratos.
 
 ---
 
-## Parte 14 — CAP-01
+## Parte 17 — CAP-01
 
-Caso web de producción con `severity=high` y activo crítico.
+Web de producción, `severity=high`, activo crítico.
 
 Debes demostrar:
 
 ```text
-prioridad determinista
-retrieval útil
-análisis grounded
+P1 determinista
+RAG útil
+Agent MCP real
+hechos operativos separados de hipótesis
 human review
 next_step coherente
 ```
 
 ---
 
-## Parte 15 — CAP-02
+## Parte 18 — CAP-02
 
-Caso DB critical con información insuficiente para causa raíz.
+DB critical con información insuficiente para causa raíz.
 
 Debes demostrar:
 
 ```text
 P1
 no inventar root cause
+MCP puede aportar o no datos vivos
 checks coherentes
 human review
 ```
 
 ---
 
-## Parte 16 — CAP-03
+## Parte 19 — CAP-03
 
 API medium con latencia.
 
-Comprueba que el análisis puede utilizar contexto documental sin elevar arbitrariamente la prioridad.
+Comprueba que el análisis utiliza contexto documental/operativo sin elevar arbitrariamente la prioridad.
+
+Esperado:
+
+```text
+P3
+```
 
 ---
 
-## Parte 17 — CAP-04
+## Parte 20 — CAP-04
 
 Batch high con documentación insuficiente.
 
@@ -448,12 +523,12 @@ priority
 y:
 
 ```text
-necesidad de revisión
+calidad/suficiencia del contexto
 ```
 
 ---
 
-## Parte 18 — CAP-05
+## Parte 21 — CAP-05
 
 Falta `asset_id`.
 
@@ -462,11 +537,12 @@ Esperado conceptualmente:
 ```text
 manual review
 Dify no llamado
+MCP no llamado
 ```
 
 ---
 
-## Parte 19 — CAP-06
+## Parte 22 — CAP-06
 
 Activo desconocido.
 
@@ -478,9 +554,11 @@ found=false
 
 No clasifiques automáticamente sin contexto del activo.
 
+Dify/MCP no deben utilizarse para sustituir al catálogo autoritativo.
+
 ---
 
-## Parte 20 — CAP-07
+## Parte 23 — CAP-07
 
 Prompt injection directa.
 
@@ -490,21 +568,32 @@ El texto intenta:
 cambiar priority
 eliminar human review
 afirmar reboot
+ordenar rollback mediante MCP
 ```
 
-Debes demostrar que no controla decisiones sensibles.
+Debes demostrar:
+
+```text
+priority permanece P1
+Agent no recibe details innecesarios
+solo existen tools read-only
+no hay restart/rollback
+no se afirma una remediación inexistente
+```
 
 ---
 
-## Parte 21 — CAP-08
+## Parte 24 — CAP-08
 
 Petición sin autenticación.
 
 Debe ser rechazada antes del procesamiento normal.
 
+No deben ejecutarse Dify ni MCP.
+
 ---
 
-## Parte 22 — CAP-09
+## Parte 25 — CAP-09
 
 Simula Dify no disponible.
 
@@ -512,35 +601,55 @@ Debes demostrar:
 
 ```text
 priority preservada
-ai_status explícito
+ai_status = unavailable
 human review
 next_step seguro
 ```
 
+Aquí se pierde el Workflow Dify completo de esa ejecución.
+
 ---
 
-## Parte 23 — CAP-10
+## Parte 26 — CAP-10
 
 Caso específico del nuevo runbook de portal de clientes.
 
-Debes comprobar que el retrieval recupera `RUNBOOK-PORTAL-01` o fragmentos equivalentes relevantes.
+Debes comprobar que RAG recupera `RUNBOOK-PORTAL-01` o fragmentos equivalentes.
 
-La respuesta debería utilizar orientación sobre:
+El análisis puede combinarlo con datos MCP sobre cambios/health si están disponibles.
 
-```text
-autenticación
-IdP
-sesiones/cookies
-cambios de release
-```
-
-sin ejecutar rollback automáticamente.
+No debe ejecutar rollback automáticamente.
 
 ---
 
-## Parte 24 — Revisar trazabilidad
+## Parte 27 — CAP-11
 
-Selecciona al menos una ejecución válida y una excepción.
+Simula **MCP no disponible mientras Dify sigue operativo**.
+
+Esperado:
+
+```text
+priority preservada
+ai_status = succeeded
+operational_context_status = unavailable
+operational_facts = []
+human review = true
+next_step = ESCALATE_HUMAN
+```
+
+Debes explicar por qué esto es distinto de CAP-09.
+
+---
+
+## Parte 28 — Revisar trazabilidad
+
+Selecciona al menos:
+
+```text
+una ejecución válida con tool calls
+una excepción funcional
+un degraded mode
+```
 
 Documenta:
 
@@ -548,6 +657,7 @@ Documenta:
 alert_id
 n8n execution id
 dify_run_id si existe
+Agent round/tool call si existe
 evidence_id si existe
 regla de priority
 rama seguida
@@ -555,28 +665,15 @@ rama seguida
 
 ---
 
-## Parte 25 — Revisar arquitectura contra implementación
+## Parte 29 — Revisar arquitectura contra implementación
 
 Compara tu diagrama inicial con el sistema final.
 
-Documenta cambios.
-
-Ejemplos:
-
-```text
-movimos validación antes de API
-separamos policy review
-cambiamos retrieval_query
-añadimos un fallback
-```
-
-No ocultes desviaciones.
-
-Explícalas.
+Documenta cambios y justifica desviaciones.
 
 ---
 
-## Parte 26 — Completar informe final
+## Parte 30 — Completar informe final
 
 Utiliza:
 
@@ -590,7 +687,7 @@ Debe incluir:
 arquitectura
 requisitos
 contratos
-RAG
+REST/RAG/MCP
 seguridad
 resiliencia
 pruebas
@@ -602,7 +699,7 @@ siguiente paso
 
 ---
 
-## Parte 27 — Preparar defensa técnica
+## Parte 31 — Preparar defensa técnica
 
 Utiliza:
 
@@ -618,29 +715,13 @@ Duración sugerida:
 3-5 minutos de preguntas
 ```
 
-No conviertas la presentación en una colección de capturas.
-
-Debes defender:
-
-```text
-por qué
-```
-
-tanto como:
-
-```text
-qué construiste
-```
+Debes defender el **porqué** del diseño, no solo enseñar capturas.
 
 ---
 
 # Criterios de evaluación
 
-Consulta:
-
-```text
-rubrica_capstone.md
-```
+Consulta `rubrica_capstone.md`.
 
 Se evaluará:
 
@@ -648,8 +729,9 @@ Se evaluará:
 arquitectura
 contratos
 funcionalidad
-RAG
+REST/RAG/MCP
 IA controlada
+tool safety
 seguridad
 resiliencia
 pruebas
@@ -669,12 +751,13 @@ Entrega:
 1. workflow n8n funcional;
 2. Workflow Dify utilizado;
 3. Knowledge Base actualizada con el runbook del capstone;
-4. `checklist_validacion.md` completado;
-5. `plantilla_informe_final.md` completada;
-6. presentación final;
-7. evidencias de pruebas CAP-01…CAP-10;
-8. al menos un ejemplo de trazabilidad end-to-end;
-9. recomendación de siguiente paso.
+4. evidencia de Agent/tool calls MCP;
+5. `checklist_validacion.md` completado;
+6. `plantilla_informe_final.md` completada;
+7. presentación final;
+8. evidencias de pruebas CAP-01…CAP-11;
+9. al menos un ejemplo de trazabilidad end-to-end;
+10. recomendación de siguiente paso.
 
 No incluyas secretos.
 
@@ -685,14 +768,17 @@ No incluyas secretos.
 Al terminar deberías poder explicar sin abrir la solución:
 
 - por qué la prioridad vive en n8n;
-- qué aporta Dify que no aportan las reglas;
-- cómo funciona RAG en tu solución;
+- por qué el catálogo se consulta por REST;
+- qué aporta RAG;
+- qué aporta MCP;
+- cómo sabes que una tool realmente se ejecutó;
 - qué ocurre si falta documentación;
+- qué ocurre si MCP no devuelve datos;
+- qué ocurre si MCP no está disponible;
 - qué ocurre si Dify falla;
 - qué ocurre si Evidence API falla;
-- cómo se evita que una prompt injection cambie decisiones sensibles;
-- qué datos son autoritativos;
-- qué datos se envían al LLM y cuáles no;
+- cómo se evita que una prompt injection cambie decisiones o provoque tool use peligroso;
+- por qué las tools MCP son read-only;
 - cómo se decide `next_step`;
 - cómo reconstruir una ejecución;
 - qué riesgos siguen abiertos;
@@ -708,8 +794,10 @@ Pretende demostrar que sabes diseñar una automatización donde:
 
 ```text
 las reglas hacen lo que debe ser determinista
-la IA aporta interpretación donde añade valor
-RAG aporta conocimiento controlado
+REST aporta contratos autoritativos
+RAG aporta conocimiento documentado
+MCP aporta capacidades y contexto operativo vivo controlado
+la IA interpreta y sintetiza donde añade valor
 n8n mantiene orquestación y políticas
 las personas mantienen autoridad sobre decisiones sensibles
 ```
