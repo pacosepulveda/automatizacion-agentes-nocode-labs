@@ -1,32 +1,43 @@
-# Laboratorio 6 — Integración n8n + Dify
+# Laboratorio 6 — Integración n8n + Dify + RAG + MCP
 
 ## Contexto
 
-Hasta ahora hemos construido dos piezas separadas:
+Hasta ahora hemos construido piezas que resolvían problemas distintos:
 
-- **n8n** recibe alertas, valida datos, consulta APIs, enriquece información, aplica reglas deterministas y registra evidencias;
-- **Dify** interpreta contexto técnico, recupera documentación mediante RAG y genera análisis controlados.
+- **n8n** recibe alertas, valida contratos, consulta APIs, enriquece datos, aplica reglas deterministas y registra evidencias;
+- **Dify + RAG** interpreta contexto técnico y recupera documentación operativa;
+- en este módulo añadiremos **MCP (Model Context Protocol)** para que un agente pueda consultar **estado operativo vivo** mediante herramientas controladas.
 
-En este laboratorio uniremos ambas plataformas.
-
-El objetivo no es convertir Dify en el cerebro de toda la automatización. La arquitectura mantendrá una división clara de responsabilidades:
+El objetivo no es convertir el LLM en el dueño del proceso. La arquitectura mantiene una separación explícita de responsabilidades:
 
 ```text
 n8n
 → entrada
 → validación
-→ integración
+→ APIs deterministas
 → reglas
 → prioridad
 → credenciales
 → trazabilidad
 
-Dify
-→ retrieval
-→ interpretación
-→ hipótesis
-→ orientación documental
+Dify / RAG
+→ documentación relativamente estable
+→ runbooks
+→ procedimientos
+→ orientación interna
+
+Dify / Agent + MCP
+→ herramientas descubiertas dinámicamente
+→ cambios recientes
+→ alertas recientes
+→ incidentes abiertos
+→ health actual
+
+LLM final
+→ síntesis
+→ separación de hechos e hipótesis
 → comprobaciones recomendadas
+→ salida estructurada
 
 Humano
 → autorización
@@ -34,7 +45,9 @@ Humano
 → acciones sensibles
 ```
 
-Dify **no calculará ni modificará la prioridad**. Las reglas P1-P4 siguen siendo responsabilidad de n8n.
+Dify **no calculará ni modificará la prioridad**. Las reglas P1–P4 siguen siendo responsabilidad de n8n.
+
+MCP tampoco ejecutará remediaciones. El servidor del laboratorio solo expone herramientas **read-only** de observación.
 
 > Todos los datos son ficticios. No utilices secretos, credenciales o información productiva.
 
@@ -44,21 +57,25 @@ Dify **no calculará ni modificará la prioridad**. Las reglas P1-P4 siguen sien
 
 Al finalizar deberías ser capaz de:
 
-- explicar cómo dividir responsabilidades entre un orquestador y un componente de IA;
+- explicar qué responsabilidad corresponde a n8n, RAG, MCP, LLM y humano;
 - crear una aplicación **Workflow** en Dify para uso máquina a máquina;
 - reutilizar una Knowledge Base RAG desde un Workflow;
+- utilizar una integración MCP compartida sin gestionar su secreto;
+- configurar un nodo **Agent** con estrategia `FunctionCalling`;
+- limitar el Agent a un conjunto concreto de herramientas MCP;
+- inspeccionar qué tools decidió invocar el agente y con qué argumentos;
+- diferenciar **documentación** de **estado operativo vivo**;
+- sintetizar alerta validada + RAG + MCP mediante un LLM final;
+- generar Structured Output sin permitir que la IA sustituya reglas deterministas;
 - publicar un Workflow de Dify;
 - crear un API key de aplicación;
 - almacenar ese API key mediante Credentials en n8n;
 - invocar Dify mediante `HTTP Request`;
-- construir inputs dinámicos desde una alerta enriquecida;
 - utilizar `response_mode=blocking`;
 - validar tanto el HTTP como el estado funcional devuelto por Dify;
-- recuperar outputs estructurados;
 - conservar datos de n8n después de una llamada HTTP;
-- integrar análisis IA sin permitir que sustituya reglas deterministas;
-- diseñar fallback ante caída o error del servicio de IA;
-- correlacionar trazas de n8n y Dify.
+- registrar trazabilidad entre n8n, Dify y evidencia;
+- razonar sobre qué debería ocurrir si Dify o MCP no están disponibles.
 
 ---
 
@@ -88,6 +105,23 @@ AL01
 
 Sustitúyelos por tu identificador real.
 
+## Integraciones compartidas preparadas por el instructor
+
+En el Workspace de Dify ya deben estar disponibles:
+
+```text
+MCP Server: Telvora Ops Hub
+Agent Strategy: Dify Agent Strategies
+```
+
+No necesitas conocer el token MCP ni crear otra integración.
+
+**No modifiques, elimines ni vuelvas a instalar estas integraciones compartidas.**
+
+El Workspace de Dify es compartido. Las aplicaciones pueden ser visibles para otros alumnos. Edita únicamente Apps cuyo nombre comience por tu prefijo (`AL01-`, `AL02-`, etc.).
+
+La Knowledge Base de M05 sí es privada y debes seleccionar únicamente la tuya.
+
 ---
 
 # Material proporcionado
@@ -96,7 +130,9 @@ En `materiales/` encontrarás:
 
 - `casos_integracion.json`;
 - `schema_analisis_dify.json`;
+- `prompt_agent_mcp.md`;
 - `prompt_workflow_dify.md`;
+- `contrato_mcp_telvora_ops_hub.md`;
 - `contrato_dify_api.md`;
 - `checklist_pruebas.md`.
 
@@ -122,7 +158,7 @@ VALIDAR
 no        sí
 |          |
 v          v
-MANUAL   API ACTIVOS
+MANUAL   API ACTIVOS (REST)
               |
               v
          ¿ACTIVO EXISTE?
@@ -142,6 +178,19 @@ MANUAL   API ACTIVOS
                 DIFY WORKFLOW API
                        |
                        v
+             +----------------------+
+             | WORKFLOW DE DIFY     |
+             |                      |
+             |  RAG                 |
+             |   +                  |
+             |  AGENT + MCP         |
+             |   +                  |
+             |  LLM FINAL           |
+             |   +                  |
+             |  STRUCTURED OUTPUT   |
+             +----------------------+
+                       |
+                       v
                 VALIDAR RESPUESTA
                        |
                        v
@@ -154,7 +203,7 @@ MANUAL   API ACTIVOS
                  RESPONDER HTTP
 ```
 
-Las excepciones de entrada, activo desconocido o severidad inválida **no necesitan llamar al LLM**.
+Las excepciones de entrada, activo desconocido o severidad inválida **no deben llamar a Dify** y, por tanto, tampoco deben consumir RAG ni MCP.
 
 ---
 
@@ -169,13 +218,13 @@ Workflow
 Nombre:
 
 ```text
-<ID_ALUMNO>-M06-Analisis-RAG-API
+<ID_ALUMNO>-M06-Analisis-RAG-MCP-API
 ```
 
 Ejemplo:
 
 ```text
-AL01-M06-Analisis-RAG-API
+AL01-M06-Analisis-RAG-MCP-API
 ```
 
 No edites aplicaciones cuyo prefijo pertenezca a otro alumno.
@@ -190,10 +239,11 @@ Ahora Dify será invocado por n8n. Queremos una interfaz máquina a máquina bas
 
 # Parte 2 — Definir inputs del Workflow
 
-En el nodo **Start** crea tres variables de texto:
+En el nodo **Start** crea cuatro variables de texto:
 
 ```text
 alert_context
+asset_id
 retrieval_query
 question
 ```
@@ -202,13 +252,23 @@ question
 
 Contendrá la alerta ya validada, enriquecida y clasificada por n8n, serializada como texto JSON.
 
+## asset_id
+
+Contendrá únicamente el identificador del activo validado, por ejemplo:
+
+```text
+srv-web-01
+```
+
+Lo utilizaremos para construir la consulta del Agent MCP sin obligarle a inferir el identificador desde un bloque JSON.
+
 ## retrieval_query
 
-Contendrá una consulta preparada por n8n con términos relevantes para buscar documentación.
+Contendrá una consulta preparada por n8n con términos útiles para recuperar documentación.
 
 ## question
 
-Describe el objetivo de análisis que esperamos del LLM.
+Describe el objetivo de análisis que esperamos del LLM final.
 
 ---
 
@@ -243,14 +303,32 @@ Top K: 3
 Score Threshold: OFF
 ```
 
----
+## Qué representa esta rama
 
-# Parte 4 — Añadir el LLM
-
-Añade:
+RAG responde a preguntas del tipo:
 
 ```text
-02 - Analizar con RAG
+¿Qué dice la documentación interna?
+¿Qué procedimiento existe?
+¿Qué comprobaciones prescribe el runbook?
+```
+
+No debe utilizarse como fuente de estado operativo actual.
+
+---
+
+# Parte 4 — Añadir el Agent MCP
+
+Añade un nodo:
+
+```text
+02 - Investigar Ops Hub (MCP)
+```
+
+Estrategia agéntica:
+
+```text
+FunctionCalling
 ```
 
 Modelo:
@@ -259,7 +337,134 @@ Modelo:
 openai.gpt-5.6-luna
 ```
 
-Configuración del laboratorio:
+Configuración:
+
+```text
+Temperature: OFF
+Top P: OFF
+Reasoning Effort: none/off si aparece
+Maximum Iterations: 5
+Memory: OFF
+```
+
+Deja `Allowed Tools` vacío.
+
+## Tool List
+
+Pulsa `+` y selecciona las cuatro herramientas de:
+
+```text
+Telvora Ops Hub
+```
+
+Habilita:
+
+```text
+get_recent_changes
+get_recent_alerts
+get_open_incidents
+get_service_health
+```
+
+No añadas herramientas de otros proveedores.
+
+## Instruction
+
+Copia el contenido de:
+
+```text
+materiales/prompt_agent_mcp.md
+```
+
+## Query
+
+Construye mediante variables de Dify una consulta equivalente a:
+
+```text
+Investiga el estado operativo actual de <asset_id>.
+Consulta cambios recientes, alertas recientes, incidentes abiertos y el estado actual del servicio.
+Distingue hechos obtenidos mediante herramientas de hipótesis.
+```
+
+Inserta `asset_id` desde **Start** utilizando el selector de variables.
+
+## Context
+
+Déjalo vacío.
+
+El Agent consulta **estado vivo mediante tools**. La documentación RAG se incorpora después en el LLM final.
+
+---
+
+# Parte 5 — Comprender qué está haciendo MCP
+
+En este laboratorio el servidor MCP se denomina:
+
+```text
+Telvora Ops Hub
+```
+
+Dify ya tiene configurada la conexión a nivel del Workspace.
+
+El Agent no recibe manualmente una lista JSON de datos operativos. En tiempo de ejecución:
+
+1. conoce las tools que tiene permitidas;
+2. el modelo decide qué tool invocar;
+3. genera los argumentos;
+4. Dify llama al servidor MCP;
+5. recibe el resultado;
+6. puede llamar a otras tools;
+7. genera una investigación final.
+
+Consulta:
+
+```text
+materiales/contrato_mcp_telvora_ops_hub.md
+```
+
+para revisar el contrato de las cuatro tools.
+
+---
+
+# Parte 6 — Probar el Agent antes de continuar
+
+Ejecuta el nodo Agent con:
+
+```text
+asset_id = srv-web-01
+```
+
+Inspecciona **Detalle / Estrategia agéntica**.
+
+Debes poder identificar `tool_calls` reales.
+
+No es obligatorio que el contenido vivo coincida exactamente con los ejemplos del enunciado. El Ops Hub mantiene estado operativo y las ventanas temporales cambian.
+
+Lo que sí debes comprobar es:
+
+- que el Agent utiliza tools de `Telvora Ops Hub`;
+- que `asset_id` se envía correctamente;
+- que los resultados proceden de las tools;
+- que no inventa una acción destructiva;
+- que distingue hechos de hipótesis.
+
+---
+
+# Parte 7 — Añadir el LLM final
+
+Añade:
+
+```text
+03 - Sintetizar RAG + MCP
+```
+
+Modelo:
+
+```text
+openai.gpt-5.6-luna
+```
+
+Configuración:
 
 ```text
 Temperature: OFF
@@ -267,7 +472,11 @@ Top P: OFF
 Reasoning Effort: none/off si aparece
 ```
 
-Conecta como **Context** la salida de `01 - Recuperar conocimiento`.
+Conecta como **Context** la salida de:
+
+```text
+01 - Recuperar conocimiento
+```
 
 Copia el prompt de:
 
@@ -275,13 +484,25 @@ Copia el prompt de:
 materiales/prompt_workflow_dify.md
 ```
 
-Inserta `alert_context` y `question` mediante el selector de variables de Dify.
+Inserta mediante el selector de variables:
+
+- `alert_context` desde Start;
+- `question` desde Start;
+- `text` desde `02 - Investigar Ops Hub (MCP)`.
+
+El último LLM es el encargado de combinar tres fuentes conceptualmente distintas:
+
+```text
+alert_context  → hechos validados por n8n
+RAG            → documentación interna
+Agent + MCP    → estado operativo vivo
+```
 
 ---
 
-# Parte 5 — Structured Output
+# Parte 8 — Structured Output
 
-En el nodo LLM habilita:
+En `03 - Sintetizar RAG + MCP` habilita:
 
 ```text
 Structured Output
@@ -298,12 +519,14 @@ El objeto generado contiene:
 ```text
 summary
 observed_facts[]
+operational_facts[]
 documented_guidance[]
 hypotheses[]
 recommended_checks[]
 missing_information[]
 confidence
 documentation_status
+operational_context_status
 ```
 
 Observa deliberadamente lo que **no** contiene:
@@ -318,7 +541,7 @@ Dify no es la fuente autoritativa de esos campos.
 
 ---
 
-# Parte 6 — Añadir End
+# Parte 9 — Añadir End
 
 Añade un nodo **End**.
 
@@ -328,27 +551,59 @@ Expón una salida llamada:
 analysis
 ```
 
-que apunte al `structured_output` del nodo LLM.
+que apunte al `structured_output` del nodo:
 
-Si tu interfaz permite añadir información adicional, puedes exponer también el texto libre, pero `analysis` es la salida necesaria para la integración.
+```text
+03 - Sintetizar RAG + MCP
+```
 
 Prueba el Workflow desde Dify con inputs manuales antes de integrarlo con n8n.
 
 ---
 
-# Parte 7 — Publicar el Workflow
+# Parte 10 — Inspeccionar la ejecución Dify
+
+Antes de publicar, ejecuta un caso manual con:
+
+```text
+asset_id = srv-web-01
+```
+
+Revisa:
+
+```text
+01 - Recuperar conocimiento
+02 - Investigar Ops Hub (MCP)
+03 - Sintetizar RAG + MCP
+```
+
+En el Agent abre:
+
+```text
+Detalle
+→ Estrategia agéntica
+→ Round
+```
+
+Comprueba qué tools se ejecutaron y con qué argumentos.
+
+Ésta es una evidencia importante del laboratorio: no basta con que la respuesta final mencione datos del Ops Hub; debes poder observar una llamada MCP.
+
+---
+
+# Parte 11 — Publicar el Workflow
 
 Guarda y **publica** el Workflow.
 
 La API de servicio utiliza la versión publicada de la aplicación.
 
-No llames a la API antes de comprobar que una ejecución manual del Workflow termina correctamente.
+No llames a la API antes de comprobar que una ejecución manual termina correctamente.
 
 ---
 
-# Parte 8 — Crear API key de la aplicación
+# Parte 12 — Crear API key de la aplicación
 
-Desde el acceso API de la App crea un API key para el laboratorio.
+Desde **Acceso API** de la App crea un API key para el laboratorio.
 
 No copies el API key en:
 
@@ -359,16 +614,18 @@ No copies el API key en:
 
 Lo utilizaremos únicamente para crear una credencial en n8n.
 
+El token MCP **no lo gestiona el alumno**. Está asociado a la integración compartida del Workspace.
+
 ---
 
-# Parte 9 — Preparar una nueva versión del workflow n8n
+# Parte 13 — Preparar una nueva versión del workflow n8n
 
 Duplica el workflow funcional de M03.
 
 Nombre:
 
 ```text
-M06-LAB06-n8n-Dify-RAG
+M06-LAB06-n8n-Dify-RAG-MCP
 ```
 
 No destruyas M03.
@@ -389,7 +646,7 @@ Esto evita colisionar con el Webhook M03 publicado.
 
 ---
 
-# Parte 10 — Mantener la lógica determinista
+# Parte 14 — Mantener la lógica determinista
 
 Conserva de M03:
 
@@ -412,7 +669,7 @@ Antes de integrar IA, vuelve a probar al menos una alerta P1 y una P2/P3/P4.
 
 ---
 
-# Parte 11 — No llamar a Dify para entradas que no pasan los controles
+# Parte 15 — No llamar a Dify para entradas inválidas
 
 Las ramas:
 
@@ -424,17 +681,24 @@ invalid_severity
 
 no deben ejecutar la llamada de Dify.
 
+Por tanto tampoco deben:
+
+```text
+consultar RAG
+invocar Agent
+consumir MCP
+consumir tokens LLM
+```
+
 Estas situaciones ya tienen una decisión determinista suficiente:
 
 ```text
 manual_review
 ```
 
-Además evitamos consumir tokens en entradas que no han superado los controles básicos.
-
 ---
 
-# Parte 12 — Unificar las rutas P1-P4 antes de Dify
+# Parte 16 — Unificar las rutas P1-P4 antes de Dify
 
 Conecta las rutas válidas P1, P2, P3 y P4 a un nodo común:
 
@@ -444,10 +708,11 @@ Conecta las rutas válidas P1, P2, P3 y P4 a un nodo común:
 
 Debe conservar los datos de la alerta enriquecida y la prioridad ya calculada.
 
-Añade tres campos auxiliares:
+Añade cuatro campos auxiliares:
 
 ```text
 alert_context
+asset_id
 retrieval_query
 question
 ```
@@ -456,15 +721,19 @@ question
 
 Serializa el item actual como JSON.
 
-Una expresión equivalente puede utilizar:
+Expresión equivalente:
 
 ```text
 {{ JSON.stringify($json) }}
 ```
 
+## asset_id
+
+Conserva el `asset_id` ya validado.
+
 ## retrieval_query
 
-Construye una cadena con datos útiles para retrieval, por ejemplo:
+Construye una cadena con datos útiles para retrieval:
 
 ```text
 asset_id + asset_name + summary + details
@@ -474,15 +743,15 @@ No incluyas secretos.
 
 ## question
 
-Usa una instrucción estable, por ejemplo:
+Usa una instrucción estable:
 
 ```text
-Analiza esta alerta, utiliza la documentación operativa disponible y recomienda qué comprobaciones técnicas no destructivas deberían realizarse a continuación. Distingue hechos, orientación documentada e hipótesis.
+Analiza esta alerta combinando los hechos validados, la documentación operativa disponible y el estado operativo vivo. Recomienda comprobaciones técnicas no destructivas. Distingue hechos, orientación documentada e hipótesis.
 ```
 
 ---
 
-# Parte 13 — Crear la credencial de Dify en n8n
+# Parte 17 — Crear la credencial de Dify en n8n
 
 Crea una credencial genérica de cabecera HTTP.
 
@@ -503,7 +772,7 @@ El secreto debe quedar almacenado en Credentials.
 
 ---
 
-# Parte 14 — Invocar Dify
+# Parte 18 — Invocar Dify
 
 Añade **HTTP Request**:
 
@@ -527,6 +796,7 @@ Body:
 {
   "inputs": {
     "alert_context": "<desde 60>",
+    "asset_id": "<desde 60>",
     "retrieval_query": "<desde 60>",
     "question": "<desde 60>"
   },
@@ -539,14 +809,18 @@ Utiliza expresiones de n8n. No copies datos de un caso concreto.
 
 ---
 
-# Parte 15 — Inspeccionar la respuesta
+# Parte 19 — Inspeccionar la respuesta
 
-Antes de continuar, ejecuta INT-01 e inspecciona la salida completa de `61 - Ejecutar Dify Workflow`.
+Ejecuta INT-01 e inspecciona la salida completa de:
+
+```text
+61 - Ejecutar Dify Workflow
+```
 
 Localiza:
 
 ```text
-workflow_run_id o identificador de ejecución equivalente
+workflow_run_id o identificador equivalente
 data.status
 data.outputs.analysis
 data.elapsed_time
@@ -555,9 +829,11 @@ data.total_tokens
 
 No asumas la estructura: compruébala en la ejecución real.
 
+Además abre la ejecución en Dify y localiza el Agent para comprobar los `tool_calls` MCP.
+
 ---
 
-# Parte 16 — Validar el estado funcional de Dify
+# Parte 20 — Validar el estado funcional de Dify
 
 Añade:
 
@@ -579,11 +855,11 @@ data.outputs.analysis
 
 ## ¿Por qué no basta HTTP 200?
 
-Porque HTTP indica que la petición fue procesada por el servicio, pero la propia ejecución del Workflow tiene un estado funcional que debemos inspeccionar.
+Porque HTTP indica que la petición fue aceptada y procesada por el servicio, pero la propia ejecución del Workflow tiene un estado funcional que debemos inspeccionar.
 
 ---
 
-# Parte 17 — Combinar datos deterministas e IA
+# Parte 21 — Combinar datos deterministas e IA
 
 En TRUE añade:
 
@@ -593,7 +869,7 @@ En TRUE añade:
 
 Después de `61 - Ejecutar Dify Workflow`, `$json` representa la respuesta de Dify.
 
-Recupera desde `60 - Preparar análisis Dify` los campos deterministas:
+Recupera desde `60 - Preparar análisis Dify`:
 
 ```text
 alert_id
@@ -624,7 +900,7 @@ No sustituyas `priority` por ningún dato del modelo.
 
 ---
 
-# Parte 18 — Evidencia final
+# Parte 22 — Evidencia final
 
 Amplía la evidencia de M03 para registrar, como mínimo:
 
@@ -636,18 +912,32 @@ priority
 status
 requires_human_review
 owner_team
-workflow_version = m06-v1
+workflow_version = m06-v2
 ai_status
 dify_run_id
 ```
 
-Si la API de evidencias permite campos adicionales, puedes incluir un resumen reducido del análisis. No es necesario almacenar toda la respuesta del LLM para completar el laboratorio.
+La API de evidencias permite campos adicionales. Puedes incluir:
 
-No registres el API key de Dify.
+```text
+ai_confidence
+documentation_status
+operational_context_status
+```
+
+No es necesario almacenar toda la respuesta del LLM.
+
+No registres:
+
+```text
+DIFY_APP_API_KEY
+MCP_TOKEN
+headers Authorization
+```
 
 ---
 
-# Parte 19 — Respuesta al emisor
+# Parte 23 — Respuesta al emisor
 
 La respuesta puede tener una estructura conceptual como:
 
@@ -663,8 +953,10 @@ La respuesta puede tener una estructura conceptual como:
     "status": "succeeded",
     "confidence": "medium",
     "summary": "...",
+    "operational_facts": ["..."],
     "recommended_checks": ["..."],
     "documentation_status": "relevant_context_found",
+    "operational_context_status": "relevant_live_context_found",
     "dify_run_id": "..."
   },
   "evidence_id": "ev-..."
@@ -675,7 +967,7 @@ Separa visualmente datos de proceso y datos de IA.
 
 ---
 
-# Parte 20 — Sustituir `alumnoXX` en los casos
+# Parte 24 — Sustituir `alumnoXX` en los casos
 
 `casos_integracion.json` utiliza IDs como:
 
@@ -695,7 +987,7 @@ Esto reduce colisiones entre evidencias generadas por alumnos distintos.
 
 ---
 
-# Parte 21 — Ejecutar INT-01
+# Parte 25 — Ejecutar INT-01
 
 Esperado:
 
@@ -705,15 +997,21 @@ asset srv-web-01
 → high + production + criticality high
 → P1
 → Dify sí
+→ RAG sí
+→ Agent/MCP sí
 ```
 
-La documentación recuperada debería aportar orientación del runbook web y puede aportar información del historial de despliegues.
+RAG debería aportar orientación documental del entorno web.
 
-Dify no debe afirmar que el despliegue sea la causa únicamente por proximidad temporal.
+MCP debe aportar el estado vivo disponible en ese momento: cambios, alertas, incidentes y/o health.
+
+**No esperes valores temporales idénticos a los de otro compañero.**
+
+Dify no debe afirmar que un despliegue causó la degradación únicamente por proximidad temporal.
 
 ---
 
-# Parte 22 — Ejecutar INT-02
+# Parte 26 — Ejecutar INT-02
 
 Esperado:
 
@@ -722,22 +1020,19 @@ srv-db-01
 critical
 → P1
 → Dify sí
+→ RAG sí
+→ Agent/MCP sí
 ```
 
-El análisis debería recuperar `DB-HEALTH-01` y recomendar comprobar:
+RAG debería recuperar `DB-HEALTH-01`.
 
-- conectividad;
-- motor;
-- disco;
-- memoria;
-- conexiones;
-- replicación.
+El Ops Hub puede devolver o no eventos vivos relacionados, según el escenario activo.
 
-No debe inventar una causa raíz.
+La ausencia de un evento MCP no autoriza a inventarlo.
 
 ---
 
-# Parte 23 — Ejecutar INT-03
+# Parte 27 — Ejecutar INT-03
 
 Esperado:
 
@@ -746,15 +1041,25 @@ srv-api-01
 medium
 → P3
 → Dify sí
+→ Agent/MCP sí
 ```
 
-La Knowledge Base contiene inventario de `customer-api-01` y un despliegue documentado.
+La Knowledge Base contiene inventario y cambios documentados.
 
-El análisis puede utilizarlo como contexto, pero no debe afirmar que el despliegue causó la latencia.
+MCP aporta el estado vivo disponible.
+
+El análisis debe diferenciar:
+
+```text
+cambio documentado en RAG
+cambio reciente devuelto por MCP
+```
+
+si ambos aparecen.
 
 ---
 
-# Parte 24 — Ejecutar INT-04
+# Parte 28 — Ejecutar INT-04
 
 Esperado:
 
@@ -767,29 +1072,33 @@ high + production + criticality medium
 
 La base documental identifica el activo, pero no contiene un runbook específico de retrasos de facturación.
 
-Un buen resultado debe reconocer que la orientación documental es insuficiente en lugar de inventar un procedimiento interno.
+Si MCP tampoco aporta datos relevantes, un buen resultado debe reflejar:
+
+```text
+documentation_status = insufficient_context
+operational_context_status = no_relevant_live_context
+```
+
+en lugar de inventar un procedimiento o un incidente.
 
 ---
 
-# Parte 25 — Ejecutar INT-05
+# Parte 29 — Ejecutar INT-05, INT-06 e INT-07
+
+## INT-05
 
 Falta `asset_id`.
-
-Esperado:
 
 ```text
 manual_review
 reason = missing_required_field
 Dify = NO
+MCP = NO
 ```
 
-Comprueba en el historial que `61 - Ejecutar Dify Workflow` no se ejecutó.
+## INT-06
 
----
-
-# Parte 26 — Ejecutar INT-06
-
-Activo:
+Activo desconocido:
 
 ```text
 srv-unknown-99
@@ -802,11 +1111,10 @@ API activos → found=false
 manual_review
 reason = asset_not_found
 Dify = NO
+MCP = NO
 ```
 
----
-
-# Parte 27 — Ejecutar INT-07
+## INT-07
 
 Severity:
 
@@ -820,13 +1128,16 @@ Esperado:
 invalid_severity
 manual_review
 Dify = NO
+MCP = NO
 ```
 
-El activo puede existir y la API puede funcionar correctamente; aun así no llamamos al LLM porque la entrada no supera el contrato de clasificación.
+Comprueba en n8n que `61 - Ejecutar Dify Workflow` no se ejecutó.
+
+Si Dify no se ejecuta, el Agent MCP tampoco puede ejecutarse.
 
 ---
 
-# Parte 28 — Ejecutar INT-08
+# Parte 30 — Ejecutar INT-08
 
 Esperado:
 
@@ -834,13 +1145,50 @@ Esperado:
 severity low
 → P4
 → Dify sí
+→ RAG sí
+→ MCP sí
 ```
 
-Dify puede recuperar contexto de `customer-api-01`, pero no debe cambiar P4 ni convertir un episodio transitorio en una causa raíz confirmada.
+Dify puede recuperar documentación y estado vivo, pero no debe cambiar P4 ni convertir un episodio transitorio en una causa raíz confirmada.
 
 ---
 
-# Parte 29 — Probar un fallo controlado de Dify
+# Parte 31 — Prueba explícita de observabilidad MCP
+
+Elige una ejecución válida, preferentemente INT-01.
+
+En Dify:
+
+```text
+Registros / ejecución
+→ Agent
+→ Detalle
+→ Estrategia agéntica
+→ Round
+```
+
+Documenta al menos una llamada:
+
+```text
+tool_call_name
+tool_call_input
+tool_response
+```
+
+Ejemplo conceptual:
+
+```text
+tool_call_name = get_service_health
+tool_call_input.asset_id = srv-web-01
+```
+
+No copies tokens ni headers.
+
+Esta prueba demuestra que el agente **consultó realmente MCP** y no generó la respuesta únicamente con conocimiento del modelo.
+
+---
+
+# Parte 32 — Prueba de fallo controlado de Dify
 
 Cambia temporalmente la URL de:
 
@@ -860,85 +1208,64 @@ Observa:
 
 - la prioridad P1 ya se calculó antes;
 - el error ocurre en la integración con Dify;
+- RAG y MCP dejan de aportar análisis porque no se ejecuta el Workflow;
 - la clasificación determinista no se ha vuelto incorrecta.
 
 Restaura la URL después de la prueba.
 
----
-
-# Parte 30 — Diseñar fallback ante caída de Dify
-
-No es obligatorio implementar toda la estrategia, pero debes diseñarla.
-
-Una política razonable podría ser:
-
-```text
-Dify disponible
-→ análisis IA
-→ evidencia normal
-
-Dify no disponible tras reintentos limitados
-→ conservar priority
-→ ai_status = unavailable
-→ registrar error técnico
-→ responder sin análisis IA
-→ opcionalmente elevar revisión humana según política
-```
-
-La caída de la IA no debe convertir:
-
-```text
-P1
-```
-
-en:
-
-```text
-P3
-```
-
-o viceversa.
+La implementación completa del fallback se endurecerá en M07.
 
 ---
 
-# Parte 31 — Diferenciar tres estados
+# Parte 33 — Diferenciar cuatro tipos de información
 
-## Estado determinista
+## 1. Estado determinista
 
 ```text
+severity
 priority
 status
 requires_human_review
+owner_team
 ```
 
-procede de n8n.
+Procede del proceso controlado por n8n.
 
-## Estado de integración IA
+## 2. Conocimiento documental
 
 ```text
-ai_status
-Dify HTTP
-data.status
+documented_guidance
+documentation_status
 ```
 
-indica si el componente IA funcionó.
+Procede del RAG.
 
-## Contenido IA
+## 3. Estado operativo vivo
+
+```text
+operational_facts
+operational_context_status
+```
+
+Procede del Agent que consulta Telvora Ops Hub mediante MCP.
+
+## 4. Interpretación IA
 
 ```text
 summary
-recommended_checks
 hypotheses
+recommended_checks
 confidence
+missing_information
 ```
 
-es información de apoyo.
+Es información de apoyo generada por el modelo.
 
-No mezcles los tres conceptos.
+No mezcles estos cuatro conceptos.
 
 ---
 
-# Parte 32 — Trazabilidad de extremo a extremo
+# Parte 34 — Trazabilidad de extremo a extremo
 
 Para una ejecución válida deberías poder correlacionar:
 
@@ -948,32 +1275,36 @@ n8n execution
 asset API request
 priority
 Dify workflow_run_id
+Dify Agent rounds
+MCP tool calls
 Dify outputs
 Dify token/latency metadata
 evidence_id
 HTTP response
 ```
 
-No necesitas implementar una plataforma de observabilidad; debes ser capaz de explicar qué identificadores guardarías.
+No necesitas implementar una plataforma de observabilidad. Debes ser capaz de reconstruir qué ocurrió.
 
 ---
 
-# Parte 33 — Seguridad
+# Parte 35 — Seguridad
 
 Analiza:
 
-1. ¿qué ocurriría si se filtrase el API key de Dify?;
-2. ¿por qué debe ser específico de la App?;
-3. ¿por qué no debemos enviarlo al endpoint de evidencias?;
-4. ¿qué datos del alert_context podrían ser sensibles en un entorno real?;
-5. ¿por qué Dify no debería recibir eventos inválidos?;
-6. ¿qué permisos deberían existir sobre la Knowledge Base?;
-7. ¿qué riesgo supone que las Apps de Dify estén en un Workspace compartido durante esta formación?;
-8. ¿por qué un output de IA no debe convertirse directamente en una acción destructiva?
+1. ¿qué ocurriría si se filtrase el API key de la App Dify?;
+2. ¿por qué debe almacenarse en Credentials de n8n?;
+3. ¿por qué el token MCP no se entrega a cada alumno?;
+4. ¿por qué el servidor MCP solo expone tools read-only?;
+5. ¿qué riesgo tendría exponer una tool `restart_server` al mismo Agent?;
+6. ¿qué datos del `alert_context` podrían ser sensibles en un entorno real?;
+7. ¿por qué Dify no debería recibir eventos inválidos?;
+8. ¿qué permisos deberían existir sobre la Knowledge Base?;
+9. ¿qué riesgo supone que las Apps estén en un Workspace compartido?;
+10. ¿por qué una respuesta del LLM no debe convertirse directamente en una acción destructiva?
 
 ---
 
-# Parte 34 — Publicar n8n
+# Parte 36 — Publicar n8n
 
 Cuando las pruebas con Test URL hayan terminado:
 
@@ -982,7 +1313,9 @@ Cuando las pruebas con Test URL hayan terminado:
 3. copia la Production URL;
 4. comprueba que utiliza `m06-alert-<ID_ALUMNO>`;
 5. ejecuta INT-01;
-6. localiza la ejecución en el historial de n8n y en Dify.
+6. localiza la ejecución en el historial de n8n;
+7. localiza el `workflow_run_id` en Dify;
+8. abre el detalle del Agent y observa los rounds MCP.
 
 ---
 
@@ -990,16 +1323,17 @@ Cuando las pruebas con Test URL hayan terminado:
 
 Entrega:
 
-1. captura del Workflow Dify;
+1. captura del Workflow Dify completo;
 2. captura del workflow n8n;
 3. nombre de la Knowledge Base utilizada;
 4. evidencia de una llamada Dify exitosa;
-5. respuesta final de INT-01;
-6. prueba de que INT-05, INT-06 e INT-07 no llaman a Dify;
-7. resultado de INT-04 mostrando cómo se maneja documentación insuficiente;
-8. resultado de la prueba de fallo controlado;
-9. checklist completado;
-10. explicación de qué datos controla n8n y cuáles aporta Dify.
+5. evidencia de al menos una llamada MCP (`tool_call_name` + argumentos, sin secretos);
+6. respuesta final de INT-01;
+7. prueba de que INT-05, INT-06 e INT-07 no llaman a Dify/MCP;
+8. resultado de INT-04 mostrando cómo se maneja contexto insuficiente;
+9. resultado de la prueba de fallo controlado de Dify;
+10. checklist completado;
+11. explicación breve de qué información controla n8n, cuál procede de RAG, cuál de MCP y cuál es interpretación del LLM.
 
 ---
 
@@ -1011,23 +1345,33 @@ Al finalizar dispondrás de una arquitectura híbrida equivalente a:
 n8n
   ├─ recibe
   ├─ valida
-  ├─ consulta API
+  ├─ consulta REST
   ├─ enriquece
   ├─ calcula prioridad
-  ├─ decide si merece invocar IA
-  |
-  └─→ Dify Workflow
-          ├─ retrieval
-          ├─ RAG
-          ├─ LLM
-          └─ structured output
-          |
-          v
-      n8n
-       ├─ valida respuesta IA
-       ├─ combina sin perder autoridad determinista
-       ├─ registra evidencia
-       └─ responde
+  └─ decide si merece invocar IA
+         |
+         v
+      Dify Workflow
+         |
+         +--> Knowledge Retrieval
+         |      └─ documentación / RAG
+         |
+         +--> Agent FunctionCalling
+         |      └─ Telvora Ops Hub / MCP
+         |           ├─ recent changes
+         |           ├─ recent alerts
+         |           ├─ open incidents
+         |           └─ service health
+         |
+         +--> LLM final
+         |      └─ Structured Output
+         |
+         v
+        n8n
+         ├─ valida respuesta IA
+         ├─ conserva autoridad determinista
+         ├─ registra evidencia
+         └─ responde
 ```
 
 ---
@@ -1038,13 +1382,18 @@ Antes de terminar debes poder explicar:
 
 - por qué n8n y Dify tienen responsabilidades distintas;
 - por qué usamos Workflow en Dify;
-- por qué la App debe estar publicada;
-- cómo se autentica n8n frente a Dify;
+- qué diferencia existe entre REST, RAG y MCP;
+- por qué MCP resulta apropiado para consultar estado operativo vivo;
+- cómo descubre el Agent las tools que puede utilizar;
+- por qué utilizamos `FunctionCalling`;
+- por qué no entregamos el token MCP a cada alumno;
+- por qué el Agent MCP no controla `priority`;
+- por qué RAG no debe representar el health actual del servicio;
+- por qué se utiliza un LLM final después del Agent;
 - qué contiene `inputs`;
 - qué significa `response_mode=blocking`;
 - por qué se valida `data.status`;
 - cómo se recuperan datos anteriores después de HTTP Request;
-- por qué Dify no controla priority;
 - por qué algunas alertas no deben consumir IA;
 - qué ocurre si Dify falla;
 - qué identificadores permiten correlacionar una ejecución completa.
