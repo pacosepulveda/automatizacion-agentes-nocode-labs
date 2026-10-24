@@ -8,6 +8,7 @@ Release ID:
 Workflow n8n:
 Workflow Dify:
 Knowledge Base:
+MCP Server: Telvora Ops Hub
 Owner:
 Escalation contact:
 ```
@@ -25,6 +26,7 @@ Describe en 5-10 líneas:
 ```text
 - no ejecuta remediación automática;
 - no permite que Dify cambie priority;
+- no permite tools MCP destructivas;
 - no elimina human review cuando la policy la exige;
 - ...
 ```
@@ -35,12 +37,15 @@ Pasos mínimos para comprobar salud:
 
 1. comprobar FQDN de n8n;
 2. comprobar FQDN de Dify;
-3. ejecutar un caso baseline autenticado;
-4. verificar prioridad;
-5. verificar `ai_status`;
-6. verificar ejecución n8n;
-7. verificar `dify_run_id` cuando exista;
-8. verificar evidencia cuando aplique.
+3. comprobar `https://api.cloudsecurityinpractice.com/health`;
+4. verificar que Telvora Ops Hub está autorizado en Dify y expone 4 tools read-only;
+5. ejecutar un caso baseline autenticado;
+6. verificar prioridad;
+7. verificar `ai_status`;
+8. verificar `operational_context_status`;
+9. verificar ejecución n8n;
+10. verificar `dify_run_id` cuando exista;
+11. verificar evidencia cuando aplique.
 
 Resultado esperado:
 
@@ -76,7 +81,42 @@ Escalado:
 
 ```
 
-## 6. Fallos de autenticación en Webhook
+## 6. MCP / Telvora Ops Hub no disponible
+
+Síntomas:
+
+```text
+Agent error / fallback MCP_UNAVAILABLE
+operational_context_status = unavailable
+```
+
+Comprobaciones:
+
+```text
+- salud de api.cloudsecurityinpractice.com;
+- estado de la integración MCP en Dify;
+- tool list del Agent;
+- logs/rounds del Agent;
+```
+
+Comportamiento esperado:
+
+```text
+priority preservada
+Dify puede seguir aportando RAG/LLM si el fallback funciona
+operational_facts no se inventan
+operational_context_status = unavailable
+human review = true
+```
+
+Qué NO hacer:
+
+```text
+no añadir tools destructivas como solución temporal
+no copiar MCP_TOKEN a la App o a n8n
+```
+
+## 7. Fallos de autenticación en Webhook
 
 Señal:
 
@@ -96,7 +136,7 @@ Qué NO hacer:
 no desactivar autenticación para restaurar servicio
 ```
 
-## 7. Documentación insuficiente / confidence low
+## 8. Documentación insuficiente / confidence low
 
 Comportamiento esperado:
 
@@ -110,7 +150,7 @@ Responsable de revisión:
 
 ```
 
-## 8. Evidence API no disponible
+## 9. Evidence API no disponible
 
 Comportamiento esperado:
 
@@ -130,7 +170,7 @@ Cómo registrar temporalmente el incidente:
 
 ```
 
-## 9. Rollback
+## 10. Rollback
 
 Trigger de rollback:
 
@@ -159,7 +199,7 @@ Smoke test posterior:
 
 ```
 
-## 10. Detener el piloto
+## 11. Detener el piloto
 
 Condiciones de stop inmediato:
 
@@ -167,6 +207,8 @@ Condiciones de stop inmediato:
 - bypass de autenticación;
 - exposición de secretos;
 - IA altera una decisión autoritativa;
+- una tool MCP destructiva aparece sin aprobación;
+- MCP failure provoca hechos operativos inventados;
 - no funciona fallback;
 - ...
 ```
@@ -177,7 +219,7 @@ Procedimiento:
 
 ```
 
-## 11. Datos para diagnóstico
+## 12. Datos para diagnóstico
 
 Conservar:
 
@@ -185,7 +227,10 @@ Conservar:
 alert_id
 n8n execution id
 dify_run_id
+Agent rounds/tool calls cuando sea necesario
 evidence_id
+ai_status
+operational_context_status
 status/errores
 latencias
 ```
@@ -195,6 +240,7 @@ No registrar:
 ```text
 API keys
 tokens
+MCP_TOKEN
 Authorization headers
 passwords
 ```
