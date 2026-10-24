@@ -2,13 +2,13 @@
 
 Repositorio de laboratorios del curso **Automatización y agentes sin código para perfiles técnicos**.
 
-El curso utiliza principalmente **n8n** para orquestación, eventos, webhooks e integraciones mediante APIs, y **Dify** para asistentes, workflows de IA, RAG y agentes con herramientas controladas.
+El curso utiliza principalmente **n8n** para orquestación, eventos, webhooks e integraciones mediante APIs, y **Dify** para asistentes, workflows de IA, RAG y agentes con herramientas controladas mediante MCP.
 
 ## Enfoque de los laboratorios
 
 Los laboratorios son progresivos: cada módulo amplía el mismo escenario técnico en lugar de utilizar ejercicios aislados. El hilo conductor inicial es el **triaje y enriquecimiento de alertas técnicas de infraestructura**.
 
-A lo largo del curso el caso evoluciona desde el análisis y diseño del proceso hasta un prototipo integrado con validaciones, APIs, IA, conocimiento documental, trazabilidad, aprobación humana, preparación de piloto y un capstone end-to-end.
+A lo largo del curso el caso evoluciona desde el análisis y diseño del proceso hasta un prototipo integrado con validaciones, APIs, IA, conocimiento documental, herramientas MCP, trazabilidad, aprobación humana, preparación de piloto y un capstone end-to-end.
 
 ## Estructura
 
@@ -72,7 +72,9 @@ modulo-06/
     └── materiales/
         ├── casos_integracion.json
         ├── schema_analisis_dify.json
+        ├── prompt_agent_mcp.md
         ├── prompt_workflow_dify.md
+        ├── contrato_mcp_telvora_ops_hub.md
         ├── contrato_dify_api.md
         └── checklist_pruebas.md
 
@@ -138,9 +140,9 @@ Construcción de un Chatflow para interpretar el contexto de una alerta, compara
 
 Creación de una Knowledge Base privada, indexación Parent-child, embeddings con Amazon Titan, Hybrid Search con Cohere Rerank, pruebas de retrieval y construcción de un Chatflow que responda utilizando evidencia documental recuperada y reconozca cuándo la documentación no contiene la respuesta.
 
-### Módulo 6 — Integración n8n + Dify
+### Módulo 6 — Integración n8n + Dify + RAG + MCP
 
-Construcción de una automatización híbrida donde n8n mantiene validación, APIs y prioridad determinista, invoca mediante API un Workflow publicado de Dify con RAG y Structured Output, valida su respuesta, combina el análisis IA con los datos autoritativos y mantiene trazabilidad y fallback ante fallos del componente de IA.
+Construcción de una automatización híbrida donde n8n mantiene validación, REST y prioridad determinista; Dify recupera documentación mediante RAG y utiliza un Agent `FunctionCalling` para consultar estado operativo vivo en **Telvora Ops Hub** mediante MCP. Un LLM final sintetiza hechos validados, documentación y datos vivos en Structured Output, mientras n8n conserva la autoridad, la trazabilidad y el control de la evidencia.
 
 ### Módulo 7 — Hardening del workflow con IA
 
