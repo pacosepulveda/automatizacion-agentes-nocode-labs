@@ -163,7 +163,3 @@ Capstone end-to-end a partir de un briefing y contratos: Webhook autenticado, va
 Cada laboratorio contiene un `ENUNCIADO.md` con las instrucciones y una carpeta `materiales/` con los datos o archivos necesarios para realizarlo.
 
 Todos los datos utilizados en este repositorio son ficticios y están destinados exclusivamente a formación. No deben sustituirse por credenciales, información productiva o datos corporativos sensibles.
-
-## Soluciones
-
-Las soluciones detalladas para instructor se mantienen fuera de este repositorio y no forman parte de los materiales entregados a los alumnos.
