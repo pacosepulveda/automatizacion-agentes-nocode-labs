@@ -1,7 +1,7 @@
 [
   {
     "case_id": "INT-01",
-    "description": "Web high en producción crítica -> P1 + runbook web",
+    "description": "Web high en producción crítica -> P1 + RAG + investigación MCP",
     "payload": {
       "alert_id": "alumnoXX-ALT-6001",
       "timestamp": "2026-10-23T10:00:00Z",
@@ -14,11 +14,13 @@
     },
     "expected_priority": "P1",
     "dify_expected": "called",
-    "knowledge_expectation": "Runbook web y, opcionalmente, historial de despliegues relevante"
+    "mcp_expected": "called",
+    "knowledge_expectation": "Runbook web y documentación operativa relevante",
+    "operational_expectation": "El Agent debe consultar estado vivo del activo; los valores exactos pueden variar con el tiempo"
   },
   {
     "case_id": "INT-02",
-    "description": "Health check DB crítico -> P1 + runbook DB",
+    "description": "Health check DB crítico -> P1 + runbook DB + investigación MCP",
     "payload": {
       "alert_id": "alumnoXX-ALT-6002",
       "timestamp": "2026-10-23T10:02:00Z",
@@ -31,11 +33,13 @@
     },
     "expected_priority": "P1",
     "dify_expected": "called",
-    "knowledge_expectation": "Procedimiento DB-HEALTH-01"
+    "mcp_expected": "called",
+    "knowledge_expectation": "Procedimiento DB-HEALTH-01",
+    "operational_expectation": "Consultar cambios, alertas, incidentes y health disponibles; no inventar eventos ausentes"
   },
   {
     "case_id": "INT-03",
-    "description": "API de producción medium -> P3 + contexto de cambios",
+    "description": "API de producción medium -> P3 + RAG + estado vivo MCP",
     "payload": {
       "alert_id": "alumnoXX-ALT-6003",
       "timestamp": "2026-10-23T10:04:00Z",
@@ -48,11 +52,13 @@
     },
     "expected_priority": "P3",
     "dify_expected": "called",
-    "knowledge_expectation": "Inventario de customer-api-01 y último despliegue documentado"
+    "mcp_expected": "called",
+    "knowledge_expectation": "Inventario de customer-api-01 y cambios documentados",
+    "operational_expectation": "Diferenciar cambios documentados mediante RAG de cambios recientes devueltos por MCP"
   },
   {
     "case_id": "INT-04",
-    "description": "Batch high de criticidad medium -> P2; documentación operativa específica insuficiente",
+    "description": "Batch high de criticidad medium -> P2; documentación o estado vivo pueden ser insuficientes",
     "payload": {
       "alert_id": "alumnoXX-ALT-6004",
       "timestamp": "2026-10-23T10:06:00Z",
@@ -65,11 +71,13 @@
     },
     "expected_priority": "P2",
     "dify_expected": "called",
-    "knowledge_expectation": "El inventario identifica el activo, pero no existe un runbook específico del batch; no debe inventarse"
+    "mcp_expected": "called",
+    "knowledge_expectation": "El inventario identifica el activo, pero no existe un runbook específico del batch; no debe inventarse",
+    "operational_expectation": "Si MCP no aporta hechos relevantes, reconocer no_relevant_live_context"
   },
   {
     "case_id": "INT-05",
-    "description": "Falta asset_id -> revisión manual; Dify no debe llamarse",
+    "description": "Falta asset_id -> revisión manual; Dify/MCP no deben llamarse",
     "payload": {
       "alert_id": "alumnoXX-ALT-6005",
       "timestamp": "2026-10-23T10:08:00Z",
@@ -81,11 +89,12 @@
     },
     "expected_priority": null,
     "expected_reason": "missing_required_field",
-    "dify_expected": "not_called"
+    "dify_expected": "not_called",
+    "mcp_expected": "not_called"
   },
   {
     "case_id": "INT-06",
-    "description": "Activo desconocido -> revisión manual; Dify no debe llamarse",
+    "description": "Activo desconocido -> revisión manual; Dify/MCP no deben llamarse",
     "payload": {
       "alert_id": "alumnoXX-ALT-6006",
       "timestamp": "2026-10-23T10:10:00Z",
@@ -98,11 +107,12 @@
     },
     "expected_priority": null,
     "expected_reason": "asset_not_found",
-    "dify_expected": "not_called"
+    "dify_expected": "not_called",
+    "mcp_expected": "not_called"
   },
   {
     "case_id": "INT-07",
-    "description": "Severity inválida -> revisión manual; Dify no debe llamarse",
+    "description": "Severity inválida -> revisión manual; Dify/MCP no deben llamarse",
     "payload": {
       "alert_id": "alumnoXX-ALT-6007",
       "timestamp": "2026-10-23T10:12:00Z",
@@ -115,11 +125,12 @@
     },
     "expected_priority": null,
     "expected_reason": "invalid_severity",
-    "dify_expected": "not_called"
+    "dify_expected": "not_called",
+    "mcp_expected": "not_called"
   },
   {
     "case_id": "INT-08",
-    "description": "API producción low -> P4; Dify analiza sin alterar la prioridad",
+    "description": "API producción low -> P4; Dify/RAG/MCP analizan sin alterar prioridad",
     "payload": {
       "alert_id": "alumnoXX-ALT-6008",
       "timestamp": "2026-10-23T10:14:00Z",
@@ -132,6 +143,8 @@
     },
     "expected_priority": "P4",
     "dify_expected": "called",
-    "knowledge_expectation": "Puede recuperar inventario o cambios, pero no debe convertir ese contexto en una causa raíz ni cambiar P4"
+    "mcp_expected": "called",
+    "knowledge_expectation": "Puede recuperar inventario o cambios documentados, pero no debe modificar P4",
+    "operational_expectation": "El estado vivo puede ser healthy o no contener eventos; no convertir contexto temporal en causa raíz"
   }
 ]
