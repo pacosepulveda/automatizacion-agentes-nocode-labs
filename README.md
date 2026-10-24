@@ -85,7 +85,9 @@ modulo-07/
     └── materiales/
         ├── casos_hardening.json
         ├── matriz_riesgos.md
+        ├── prompt_agent_mcp_hardened.md
         ├── prompt_hardened.md
+        ├── schema_analisis_hardened.json
         ├── documento_prompt_injection.txt
         ├── checklist_seguridad.md
         └── politica_minima_template.md
@@ -144,9 +146,9 @@ Creación de una Knowledge Base privada, indexación Parent-child, embeddings co
 
 Construcción de una automatización híbrida donde n8n mantiene validación, REST y prioridad determinista; Dify recupera documentación mediante RAG y utiliza un Agent `FunctionCalling` para consultar estado operativo vivo en **Telvora Ops Hub** mediante MCP. Un LLM final sintetiza hechos validados, documentación y datos vivos en Structured Output, mientras n8n conserva la autoridad, la trazabilidad y el control de la evidencia.
 
-### Módulo 7 — Hardening del workflow con IA
+### Módulo 7 — Hardening del workflow con IA, RAG y MCP
 
-Revisión de amenazas y trust boundaries, autenticación del Webhook, límites y minimización de inputs, resistencia a prompt injection directa e indirecta, política determinista de revisión humana, fallback ante caída de Dify, pruebas adversariales y definición de una política mínima antes de preparar el piloto.
+Revisión de trust boundaries y amenazas sobre Webhook, RAG, LLM y MCP; autenticación de entrada; límites y minimización de datos; separación entre `alert_context` y el input mínimo del Agent; prompts endurecidos; Tool List MCP de mínimo privilegio y solo lectura; resistencia a prompt injection directa e indirecta; política determinista de revisión humana; diferenciación entre Dify unavailable, MCP unavailable y ausencia legítima de contexto vivo; pruebas adversariales y definición de una política mínima antes del piloto.
 
 ### Módulo 8 — Preparación de piloto y operación
 
