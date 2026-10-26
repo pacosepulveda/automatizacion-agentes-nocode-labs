@@ -35,6 +35,10 @@ Un workflow que:
 - [`materiales/casos_prueba.json`](materiales/casos_prueba.json): entradas que se utilizarán para validar el workflow.
 - [`materiales/checklist_pruebas.md`](materiales/checklist_pruebas.md): plantilla para registrar las pruebas.
 
+## Solución
+
+- [`solucion/M02-LAB01-Triage-Alertas.json`](solucion/M02-LAB01-Triage-Alertas.json): workflow completo exportado desde n8n, listo para importar en otra instancia.
+
 ## Continuidad con el curso
 
 En el siguiente laboratorio la entrada manual será sustituida por un **webhook** y los datos de activo dejarán de estar simulados para obtenerse mediante una **API de laboratorio**.
