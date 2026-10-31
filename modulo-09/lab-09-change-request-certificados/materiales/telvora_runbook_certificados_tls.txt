@@ -1,0 +1,63 @@
+TELVORA COMMUNICATIONS — RUNBOOK TLS-CERT-01
+Gestión de expiración de certificados TLS
+Uso formativo — datos ficticios
+
+OBJETIVO
+Reducir el riesgo de expiración de certificados TLS sin permitir cambios automáticos no autorizados.
+
+ÁMBITO
+Aplica a alertas category=certificate emitidas por certificate-monitoring para activos registrados en el inventario de Telvora.
+
+DATOS DE ENTRADA RELEVANTES
+- asset_id
+- certificate_name
+- days_to_expiry
+- environment
+- criticality
+- owner_team
+
+PRINCIPIOS
+1. La validez temporal del certificado se obtiene de la alerta del sistema de monitorización. El estado health del servicio no sustituye ese dato.
+2. Un servicio puede aparecer healthy y, aun así, tener un certificado próximo a expirar.
+3. No debe inferirse que una renovación se ha realizado si no existe evidencia explícita.
+4. La renovación de un certificado modifica un componente de producción y requiere autorización humana.
+
+PROCEDIMIENTO SEGÚN VENTANA DE EXPIRACIÓN
+
+A) 0–2 días restantes
+- Tratar como situación urgente.
+- Verificar si existe impacto operativo o una incidencia abierta asociada.
+- Iniciar el proceso de renovación lo antes posible.
+- La recomendación de iniciar renovación debe clasificarse como renew_certificate.
+- La renovación requiere aprobación humana.
+
+B) 3–7 días restantes
+- Priorizar la renovación en la ventana operativa más próxima.
+- Notificar al owner_team.
+- La recomendación de iniciar renovación puede clasificarse como renew_certificate.
+- La renovación requiere aprobación humana.
+
+C) 8–30 días restantes
+- Notificar al owner_team para planificación.
+- Confirmar que existe una ventana de mantenimiento prevista.
+- No realizar cambios automáticos.
+- Si no hay impacto actual, notify_team es una recomendación adecuada.
+
+D) Más de 30 días restantes
+- No se requiere intervención urgente.
+- Continuar monitorización.
+- continue_monitoring es una recomendación adecuada salvo que exista otra evidencia relevante.
+
+USO DE ESTADO OPERATIVO VIVO
+El Agent puede consultar herramientas de Telvora Ops Hub cuando aporten valor:
+- get_service_health para comprobar impacto actual;
+- get_open_incidents para saber si ya existe una incidencia;
+- get_recent_alerts si necesita contexto adicional;
+- get_recent_changes solo si existe una hipótesis razonable de relación con un cambio reciente.
+
+No es necesario llamar a todas las tools en cada alerta de certificado.
+
+SEGURIDAD
+- No existe ninguna tool para renovar certificados.
+- El Agent solo investiga y recomienda.
+- renew_certificate siempre debe ser autorizado por una persona antes de cualquier ejecución externa.
