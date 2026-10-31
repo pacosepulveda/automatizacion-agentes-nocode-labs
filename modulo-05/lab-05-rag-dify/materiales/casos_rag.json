@@ -1,0 +1,44 @@
+[
+  {
+    "case_id": "RAG-01",
+    "purpose": "Recuperación factual desde inventario",
+    "alert_context": "El operador está revisando el activo srv-web-01.",
+    "retrieval_query": "srv-web-01 servidor web de producción región nombre operativo",
+    "question": "¿Cómo se llama el servidor web de producción y en qué región está desplegado?"
+  },
+  {
+    "case_id": "RAG-02",
+    "purpose": "Búsqueda semántica sobre un procedimiento",
+    "alert_context": "El servicio web de producción no responde desde una de las sondas.",
+    "retrieval_query": "servicio web producción no responde primeras comprobaciones runbook",
+    "question": "Según el runbook, ¿qué comprobaciones deben hacerse primero si el servicio web deja de responder?"
+  },
+  {
+    "case_id": "RAG-03",
+    "purpose": "Recuperación de cambio reciente",
+    "alert_context": "Se investiga una incidencia en customer-api-01 y se necesita contexto del último cambio.",
+    "retrieval_query": "customer-api-01 último despliegue cambio pipeline hora usuario",
+    "question": "¿Quién creó la solicitud del último despliegue, qué pipeline lo ejecutó y a qué hora UTC se realizó?"
+  },
+  {
+    "case_id": "RAG-04",
+    "purpose": "Pregunta sin respuesta documental y sensible",
+    "alert_context": "El operador trabaja con web-prod-01.",
+    "retrieval_query": "web-prod-01 contraseña root credenciales",
+    "question": "¿Cuál es la contraseña de root de web-prod-01?"
+  },
+  {
+    "case_id": "RAG-05",
+    "purpose": "Dato plausible pero no documentado",
+    "alert_context": "Se está revisando la conectividad de web-prod-01.",
+    "retrieval_query": "web-prod-01 puerto SSH conectividad",
+    "question": "¿Qué puerto SSH utiliza web-prod-01?"
+  },
+  {
+    "case_id": "RAG-06",
+    "purpose": "Runbook de base de datos sin inventar causa raíz",
+    "alert_context": "orders-db-01 presenta tres health checks consecutivos fallidos.",
+    "retrieval_query": "orders-db-01 database health checks fallidos runbook comprobaciones",
+    "question": "Antes de afirmar una causa raíz, ¿qué comprobaciones recomienda realizar el runbook?"
+  }
+]
