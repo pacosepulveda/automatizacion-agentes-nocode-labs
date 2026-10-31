@@ -1,0 +1,6 @@
+asset_id,asset_name,environment,criticality,owner_team
+srv-web-01,Web Production 01,production,high,WebOps
+db-prod-01,Database Production 01,production,high,DBA
+srv-dev-02,Development Server 02,development,medium,DevTeam
+api-prod-01,Customer API Production,production,high,PlatformOps
+batch-prod-01,Batch Processor Production,production,medium,DataOps
