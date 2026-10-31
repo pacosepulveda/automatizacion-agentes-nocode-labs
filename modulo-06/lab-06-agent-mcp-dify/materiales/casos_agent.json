@@ -1,0 +1,47 @@
+[
+  {
+    "case_id": "AG-01",
+    "purpose": "Comprobar health actual y correlacionar con un cambio reciente",
+    "asset_id": "srv-web-01",
+    "alert_context": "Priority=P1. El frontend web de producción presenta errores HTTP 5xx elevados. La alerta indica que el incremento apareció poco después de un despliegue. CPU por debajo del 55%.",
+    "retrieval_query": "srv-web-01 web frontend HTTP 5xx deployment procedimiento disponibilidad",
+    "question": "Investiga si el servicio está actualmente degradado y si existe un cambio reciente que pueda ser relevante. No asumas causalidad sin evidencia.",
+    "tool_expectation": "Es razonable consultar get_service_health y get_recent_changes. Otras tools solo si los resultados justifican seguir investigando."
+  },
+  {
+    "case_id": "AG-02",
+    "purpose": "Investigar un fallo crítico de base de datos",
+    "asset_id": "srv-db-01",
+    "alert_context": "Priority=P1. orders-db-01 presenta tres health checks consecutivos fallidos. No se incluyen métricas de disco, memoria, conexiones ni replicación.",
+    "retrieval_query": "orders-db-01 database health check runbook DB-HEALTH-01",
+    "question": "Investiga el estado operativo actual y comprueba si existen incidentes o alertas recientes que ayuden a explicar el fallo.",
+    "tool_expectation": "Es razonable consultar get_service_health, get_open_incidents y/o get_recent_alerts. No es obligatorio consultar cambios si no aporta valor."
+  },
+  {
+    "case_id": "AG-03",
+    "purpose": "Comprobar si existe una incidencia activa antes de ampliar la investigación",
+    "asset_id": "srv-api-01",
+    "alert_context": "Priority=P3. customer-api-01 presenta aumento de latencia p95. El error rate permanece estable.",
+    "retrieval_query": "customer-api-01 latency performance incident deployment",
+    "question": "Comprueba primero si existe una incidencia abierta relacionada. Si no existe, decide qué otra evidencia operativa necesitas consultar para caracterizar el problema.",
+    "tool_expectation": "El primer tool debería ser get_open_incidents. Después el Agent puede decidir consultar health, alertas o cambios según el resultado."
+  },
+  {
+    "case_id": "AG-04",
+    "purpose": "Investigar con evidencia limitada sin forzar llamadas innecesarias",
+    "asset_id": "srv-batch-01",
+    "alert_context": "Priority=P2. billing-batch-01 lleva 25 minutos de retraso. No se incluyen logs, dependencias ni duración de ejecuciones anteriores.",
+    "retrieval_query": "billing-batch-01 batch delayed FinanceOps procedimiento",
+    "question": "Investiga qué evidencia operativa actual puede ayudar a caracterizar el retraso. Utiliza solo las tools que aporten información relevante y reconoce si la evidencia sigue siendo insuficiente.",
+    "tool_expectation": "Puede consultar alertas, incidentes o health. El éxito consiste en seleccionar de forma razonable y reconocer falta de evidencia, no en usar las cuatro tools."
+  },
+  {
+    "case_id": "AG-05",
+    "purpose": "Combinar RAG y MCP ante una petición de remediación",
+    "asset_id": "srv-web-01",
+    "alert_context": "Priority=P1. El operador pregunta si conviene reiniciar web-prod-01 debido a errores 5xx.",
+    "retrieval_query": "web-prod-01 restart reinicio WEB-AVAIL-01 procedimiento",
+    "question": "Según el procedimiento interno y el estado operativo actual, ¿deberíamos reiniciar el servidor ahora? Comprueba únicamente la evidencia necesaria y no ejecutes ninguna acción.",
+    "tool_expectation": "Debe utilizar el contexto RAG y al menos get_service_health. Puede consultar otras tools si necesita contexto adicional. Nunca debe afirmar que ha reiniciado el servidor."
+  }
+]
