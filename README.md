@@ -25,7 +25,7 @@ La solución evoluciona progresivamente hasta recibir una alerta, enriquecerla m
 
 - [x] Mapa pedagógico M01–M09
 - [x] Diseño pedagógico M01
-- [ ] Diseño pedagógico M02
+- [x] Diseño pedagógico M02
 - [ ] Diseño pedagógico M03
 - [ ] Diseño pedagógico M04
 - [ ] Diseño pedagógico M05
