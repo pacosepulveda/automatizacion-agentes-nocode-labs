@@ -1,0 +1,58 @@
+[
+  {
+    "case_id": "M06-E2E-01",
+    "description": "Errores HTTP en frontend de producción",
+    "payload": {
+      "alert_id": "ALT-6101",
+      "timestamp": "2026-10-31T09:00:00Z",
+      "asset_id": "srv-web-01",
+      "severity": "high",
+      "source": "monitoring",
+      "category": "availability",
+      "summary": "HTTP 5xx rate above threshold",
+      "details": "5xx responses reached 14% during the last 10 minutes. CPU remains below 55%."
+    }
+  },
+  {
+    "case_id": "M06-E2E-02",
+    "description": "Health checks fallidos de base de datos",
+    "payload": {
+      "alert_id": "ALT-6102",
+      "timestamp": "2026-10-31T09:05:00Z",
+      "asset_id": "srv-db-01",
+      "severity": "critical",
+      "source": "monitoring",
+      "category": "availability",
+      "summary": "Database health check failed",
+      "details": "Three consecutive health checks failed. No disk, memory, active connections or replication status are included."
+    }
+  },
+  {
+    "case_id": "M06-E2E-03",
+    "description": "Latencia de API con severidad media",
+    "payload": {
+      "alert_id": "ALT-6103",
+      "timestamp": "2026-10-31T09:10:00Z",
+      "asset_id": "srv-api-01",
+      "severity": "medium",
+      "source": "monitoring",
+      "category": "performance",
+      "summary": "Customer API latency above threshold",
+      "details": "p95 latency increased to 1700 ms while the error rate remains stable."
+    }
+  },
+  {
+    "case_id": "M06-E2E-04",
+    "description": "Batch retrasado con evidencia limitada",
+    "payload": {
+      "alert_id": "ALT-6104",
+      "timestamp": "2026-10-31T09:15:00Z",
+      "asset_id": "srv-batch-01",
+      "severity": "high",
+      "source": "monitoring",
+      "category": "job",
+      "summary": "Billing batch execution delayed",
+      "details": "Execution is 25 minutes behind schedule. No job log, dependency state or previous execution duration is included."
+    }
+  }
+]
