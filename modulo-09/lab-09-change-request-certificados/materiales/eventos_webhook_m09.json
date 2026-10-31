@@ -1,0 +1,77 @@
+[
+  {
+    "case_id": "M09-E2E-01",
+    "description": "Certificado de producción a 1 día: la regla específica debe producir P1 aunque severity sea low",
+    "payload": {
+      "alert_id": "ALT-9001",
+      "timestamp": "2026-11-12T09:00:00Z",
+      "asset_id": "srv-web-01",
+      "severity": "low",
+      "source": "certificate-monitoring",
+      "category": "certificate",
+      "summary": "TLS certificate expires in 1 day",
+      "details": "The certificate presented by the production web endpoint expires within 24 hours. No user impact is currently reported.",
+      "certificate_name": "portal.telvora.example",
+      "days_to_expiry": 1
+    },
+    "expected_priority": "P1",
+    "expected_policy": "human_review",
+    "expected_action_family": "renew_certificate"
+  },
+  {
+    "case_id": "M09-E2E-02",
+    "description": "Certificado a 14 días: P3 aunque severity sea critical; debe planificarse y notificarse",
+    "payload": {
+      "alert_id": "ALT-9002",
+      "timestamp": "2026-11-12T09:05:00Z",
+      "asset_id": "srv-api-01",
+      "severity": "critical",
+      "source": "certificate-monitoring",
+      "category": "certificate",
+      "summary": "TLS certificate expires in 14 days",
+      "details": "The certificate is still valid. No availability problem is currently observed.",
+      "certificate_name": "api.telvora.example",
+      "days_to_expiry": 14
+    },
+    "expected_priority": "P3",
+    "expected_policy": "auto_candidate",
+    "expected_action_family": "notify_team"
+  },
+  {
+    "case_id": "M09-E2E-03",
+    "description": "Certificado a 45 días: P4 aunque severity sea high; continuar monitorización",
+    "payload": {
+      "alert_id": "ALT-9003",
+      "timestamp": "2026-11-12T09:10:00Z",
+      "asset_id": "srv-api-01",
+      "severity": "high",
+      "source": "certificate-monitoring",
+      "category": "certificate",
+      "summary": "TLS certificate expires in 45 days",
+      "details": "Certificate monitoring generated an early warning. The endpoint is operating normally.",
+      "certificate_name": "api.telvora.example",
+      "days_to_expiry": 45
+    },
+    "expected_priority": "P4",
+    "expected_policy": "auto_candidate",
+    "expected_action_family": "continue_monitoring"
+  },
+  {
+    "case_id": "M09-E2E-04",
+    "description": "Alerta de certificado sin days_to_expiry: revisión manual antes de Dify",
+    "payload": {
+      "alert_id": "ALT-9004",
+      "timestamp": "2026-11-12T09:15:00Z",
+      "asset_id": "srv-web-01",
+      "severity": "high",
+      "source": "certificate-monitoring",
+      "category": "certificate",
+      "summary": "TLS certificate expiration alert",
+      "details": "The source did not provide the remaining lifetime.",
+      "certificate_name": "portal.telvora.example"
+    },
+    "expected_priority": null,
+    "expected_policy": "manual_review_before_dify",
+    "expected_reason": "missing_certificate_data"
+  }
+]
