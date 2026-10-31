@@ -1,0 +1,44 @@
+[
+  {
+    "case_id": "M05-E2E-01",
+    "description": "Errores HTTP poco después de un despliegue del frontend",
+    "payload": {
+      "alert_id": "ALT-5101",
+      "timestamp": "2026-10-21T08:05:00Z",
+      "asset_id": "srv-web-01",
+      "severity": "high",
+      "source": "monitoring",
+      "category": "availability",
+      "summary": "HTTP 5xx rate above threshold",
+      "details": "5xx responses reached 14% during the last 10 minutes. CPU remains below 55%."
+    }
+  },
+  {
+    "case_id": "M05-E2E-02",
+    "description": "Health checks fallidos de base de datos",
+    "payload": {
+      "alert_id": "ALT-5102",
+      "timestamp": "2026-10-21T08:10:00Z",
+      "asset_id": "srv-db-01",
+      "severity": "critical",
+      "source": "monitoring",
+      "category": "availability",
+      "summary": "Database health check failed",
+      "details": "Three consecutive health checks failed. The alert does not include disk, memory, active connections or replication status."
+    }
+  },
+  {
+    "case_id": "M05-E2E-03",
+    "description": "Fallo de la copia diaria de la base de datos",
+    "payload": {
+      "alert_id": "ALT-5103",
+      "timestamp": "2026-10-21T08:15:00Z",
+      "asset_id": "srv-db-01",
+      "severity": "high",
+      "source": "backup-monitoring",
+      "category": "backup",
+      "summary": "Daily database backup failed",
+      "details": "The latest scheduled full backup of telvora-prod-db finished with status FAILED. No additional diagnostic information is included."
+    }
+  }
+]
