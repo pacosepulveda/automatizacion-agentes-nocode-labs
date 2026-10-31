@@ -1,0 +1,62 @@
+[
+  {
+    "case_id": "POL-01",
+    "description": "Continuar monitorización sin cambios",
+    "decision": {
+      "recommended_next_step": "Continuar monitorizando el servicio durante 15 minutos y revisar si reaparece la degradación.",
+      "action_type": "continue_monitoring",
+      "requires_human_review": false,
+      "confidence": "medium",
+      "reason": "El servicio se encuentra estable y no existe evidencia suficiente para justificar una remediación."
+    },
+    "expected_policy": "auto_continue"
+  },
+  {
+    "case_id": "POL-02",
+    "description": "Notificar al equipo propietario",
+    "decision": {
+      "recommended_next_step": "Notificar a WebOps de la correlación temporal observada y mantener seguimiento.",
+      "action_type": "notify_team",
+      "requires_human_review": false,
+      "confidence": "medium",
+      "reason": "Existe un cambio reciente relevante pero no evidencia suficiente para ejecutar una remediación."
+    },
+    "expected_policy": "auto_continue"
+  },
+  {
+    "case_id": "POL-03",
+    "description": "Rollback siempre requiere persona aunque la IA diga lo contrario",
+    "decision": {
+      "recommended_next_step": "Revertir el despliegue CHG-4836.",
+      "action_type": "rollback_deployment",
+      "requires_human_review": false,
+      "confidence": "high",
+      "reason": "Los errores comenzaron después del despliegue y el health actual está degradado."
+    },
+    "expected_policy": "human_review"
+  },
+  {
+    "case_id": "POL-04",
+    "description": "Evidencia insuficiente",
+    "decision": {
+      "recommended_next_step": "Solicitar revisión manual antes de realizar cualquier cambio.",
+      "action_type": "insufficient_evidence",
+      "requires_human_review": true,
+      "confidence": "low",
+      "reason": "Las fuentes disponibles no permiten validar ninguna de las hipótesis."
+    },
+    "expected_policy": "human_review"
+  },
+  {
+    "case_id": "POL-05",
+    "description": "Acción desconocida o sensible por defecto",
+    "decision": {
+      "recommended_next_step": "Modificar temporalmente la configuración del balanceador.",
+      "action_type": "other_sensitive_action",
+      "requires_human_review": true,
+      "confidence": "medium",
+      "reason": "La configuración actual podría estar contribuyendo a los errores observados."
+    },
+    "expected_policy": "human_review"
+  }
+]
