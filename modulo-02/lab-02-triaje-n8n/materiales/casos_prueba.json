@@ -1,0 +1,88 @@
+[
+  {
+    "case_id": "M02-01",
+    "alert_id": "ALT-2001",
+    "timestamp": "2026-11-04T10:00:00Z",
+    "asset_id": "db-prod-01",
+    "severity": "critical",
+    "summary": "Database connection failures detected",
+    "environment": "production",
+    "criticality": "high",
+    "owner_team": "DBA"
+  },
+  {
+    "case_id": "M02-02",
+    "alert_id": "ALT-2002",
+    "timestamp": "2026-11-04T10:05:00Z",
+    "asset_id": "srv-web-01",
+    "severity": "high",
+    "summary": "Intermittent HTTP 502 responses detected after deployment",
+    "environment": "production",
+    "criticality": "high",
+    "owner_team": "WebOps"
+  },
+  {
+    "case_id": "M02-03",
+    "alert_id": "ALT-2003",
+    "timestamp": "2026-11-04T10:10:00Z",
+    "asset_id": "srv-dev-02",
+    "severity": "high",
+    "summary": "Application endpoint returning errors",
+    "environment": "development",
+    "criticality": "medium",
+    "owner_team": "DevTeam"
+  },
+  {
+    "case_id": "M02-04",
+    "alert_id": "ALT-2004",
+    "timestamp": "2026-11-04T10:15:00Z",
+    "asset_id": "batch-prod-01",
+    "severity": "medium",
+    "summary": "Batch processing duration above normal baseline",
+    "environment": "production",
+    "criticality": "medium",
+    "owner_team": "DataOps"
+  },
+  {
+    "case_id": "M02-05",
+    "alert_id": "ALT-2005",
+    "timestamp": "2026-11-04T10:20:00Z",
+    "asset_id": "srv-dev-02",
+    "severity": "low",
+    "summary": "Disk usage warning threshold reached",
+    "environment": "development",
+    "criticality": "medium",
+    "owner_team": "DevTeam"
+  },
+  {
+    "case_id": "M02-06",
+    "alert_id": "ALT-2006",
+    "timestamp": "2026-11-04T10:25:00Z",
+    "asset_id": "api-prod-01",
+    "severity": "urgent",
+    "summary": "Unexpected latency increase",
+    "environment": "production",
+    "criticality": "high",
+    "owner_team": "PlatformOps"
+  },
+  {
+    "case_id": "M02-07",
+    "alert_id": "ALT-2007",
+    "timestamp": "2026-11-04T10:30:00Z",
+    "severity": "high",
+    "summary": "Service unavailable",
+    "environment": "production",
+    "criticality": "high",
+    "owner_team": "WebOps"
+  },
+  {
+    "case_id": "M02-08",
+    "alert_id": "ALT-2008",
+    "timestamp": "2026-11-04T10:35:00Z",
+    "asset_id": "srv-web-01",
+    "severity": "medium",
+    "environment": "production",
+    "criticality": "high",
+    "owner_team": "WebOps"
+  }
+]
