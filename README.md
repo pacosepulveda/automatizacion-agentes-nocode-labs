@@ -1,4 +1,4 @@
-# Automatización y agentes sin código — Laboratorios V2
+# Automatización y agentes sin código — Laboratorios
 
 Repositorio de laboratorios del curso **Automatización y agentes sin código para perfiles técnicos**.
 
